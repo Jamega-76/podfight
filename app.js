@@ -25,6 +25,7 @@ async function loadBoth() {
 
     errorMsg.innerHTML = '';
     document.getElementById('results').style.display = 'block';
+    document.getElementById('fight-button-container').style.display = 'flex';
 
     renderPodcastCards();
     renderEpisodesToday();
