@@ -450,29 +450,70 @@
   <div class="container">
     <!-- Logo Section -->
     <div class="logo-section">
-      <svg class="logo" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+      <svg class="logo" viewBox="0 0 900 350" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));">
         <defs>
-          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#ff89ab;stop-opacity:1" />
+          <linearGradient id="arcadeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#dd1d4f;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#ff89ab;stop-opacity:1" />
             <stop offset="100%" style="stop-color:#ffd709;stop-opacity:1" />
           </linearGradient>
+          <filter id="arcadeShadow">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="2" />
+          </filter>
         </defs>
         <style>
-          .arcade-text {
-            font-size: 80px;
+          .arcade-main {
+            font-family: 'Arial Black', Arial, sans-serif;
             font-weight: 900;
-            font-family: Arial Black, sans-serif;
-            fill: url(#grad1);
-            text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+            font-size: 100px;
+            font-style: italic;
+            fill: url(#arcadeGrad);
+            stroke: #000;
+            stroke-width: 4;
+            stroke-linejoin: round;
+            letter-spacing: -2px;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+          }
+          .arcade-main-ii {
+            font-family: 'Arial Black', Arial, sans-serif;
+            font-weight: 900;
+            font-size: 90px;
+            font-style: italic;
+            fill: url(#arcadeGrad);
+            stroke: #000;
+            stroke-width: 4;
+            stroke-linejoin: round;
+            letter-spacing: 0px;
+          }
+          .arcade-turbo {
+            font-family: 'Arial Black', Arial, sans-serif;
+            font-weight: 900;
+            font-size: 75px;
+            font-style: italic;
+            fill: url(#arcadeGrad);
+            stroke: #000;
+            stroke-width: 3;
+            stroke-linejoin: round;
             letter-spacing: 2px;
           }
-          .turbo-text {
-            font-size: 60px;
-          }
         </style>
-        <text x="300" y="90" text-anchor="middle" class="arcade-text">PODCAST</text>
-        <text x="300" y="170" text-anchor="middle" class="arcade-text">FIGHTER II</text>
-        <text x="450" y="230" text-anchor="middle" class="arcade-text turbo-text">TURBO</text>
+
+        <!-- PODCAST -->
+        <text x="180" y="100" class="arcade-main">PODCAST</text>
+
+        <!-- FIGHTER -->
+        <text x="280" y="200" class="arcade-main" letter-spacing="-3">FIGHTER</text>
+
+        <!-- II -->
+        <text x="700" y="160" class="arcade-main-ii">II</text>
+
+        <!-- TURBO -->
+        <text x="680" y="260" class="arcade-turbo">TURBO</text>
+
+        <!-- Decorative lines -->
+        <line x1="100" y1="110" x2="250" y2="110" stroke="#000" stroke-width="3"/>
+        <line x1="420" y1="180" x2="620" y2="180" stroke="#000" stroke-width="3"/>
+        <line x1="650" y1="280" x2="850" y2="280" stroke="#000" stroke-width="2"/>
       </svg>
     </div>
 
