@@ -312,3 +312,149 @@ function renderHeatmap() {
   html += '</div>';
   document.getElementById('heatmap').innerHTML = html;
 }
+
+// FIGHT SYSTEM
+function startFight() {
+  if (!podcasts[1] || !podcasts[2]) {
+    alert('Load both podcasts first!');
+    return;
+  }
+
+  const modal = document.getElementById('fightModal');
+  modal.classList.add('show');
+  runFightAnimation();
+
+  setTimeout(() => {
+    modal.classList.remove('show');
+  }, 8000);
+}
+
+function getTodayStats(playerNum) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const todayEpisodes = podcasts[playerNum].episodes.filter(ep => {
+    const d = new Date(ep.pubDate);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime() === today.getTime();
+  });
+
+  const episodeCount = todayEpisodes.length;
+  const totalDuration = todayEpisodes.reduce((sum, ep) => sum + ep.duration, 0);
+  const avgDuration = episodeCount > 0 ? Math.round(totalDuration / episodeCount / 60) : 0;
+  const totalMinutes = Math.round(totalDuration / 60);
+
+  return {
+    episodeCount,
+    avgDuration,
+    totalMinutes,
+    episodes: todayEpisodes
+  };
+}
+
+function determineWinner() {
+  const stats1 = getTodayStats(1);
+  const stats2 = getTodayStats(2);
+
+  // Scoring algorithm
+  let score1 = 0;
+  let score2 = 0;
+
+  // Episodes count (most important)
+  if (stats1.episodeCount > stats2.episodeCount) {
+    score1 += 40;
+  } else if (stats2.episodeCount > stats1.episodeCount) {
+    score2 += 40;
+  } else if (stats1.episodeCount > 0) {
+    score1 += 20;
+    score2 += 20;
+  }
+
+  // Average duration
+  if (stats1.avgDuration > stats2.avgDuration) {
+    score1 += 20;
+  } else if (stats2.avgDuration > stats1.avgDuration) {
+    score2 += 20;
+  }
+
+  // Total content (minutes)
+  if (stats1.totalMinutes > stats2.totalMinutes) {
+    score1 += 40;
+  } else if (stats2.totalMinutes > stats1.totalMinutes) {
+    score2 += 40;
+  }
+
+  return score1 > score2 ? 1 : score2 > score1 ? 2 : 1;
+}
+
+function runFightAnimation() {
+  const content = document.getElementById('fightContent');
+  const winner = determineWinner();
+  const stats1 = getTodayStats(1);
+  const stats2 = getTodayStats(2);
+
+  const actions = [
+    '💥 POWER PUNCH!',
+    '⚡ LIGHTNING STRIKE!',
+    '🔥 FIRE ATTACK!',
+    '💣 EXPLOSION!',
+    '🌟 SPECIAL MOVE!',
+    '⚙️ COMBO HIT!',
+    '🎯 DIRECT HIT!',
+    '💫 ULTIMATE ATTACK!'
+  ];
+
+  let html = '';
+  let delay = 0;
+
+  // ROUND 1
+  html += `<div class="round-title" style="animation-delay: ${delay}s;">ROUND 1</div>`;
+  delay += 0.5;
+
+  for (let i = 0; i < 2; i++) {
+    const action = actions[Math.floor(Math.random() * actions.length)];
+    html += `<div class="fight-action" style="animation-delay: ${delay}s;">${action}</div>`;
+    delay += 0.6;
+  }
+
+  // ROUND 2
+  html += `<div class="round-title" style="animation-delay: ${delay}s;">ROUND 2</div>`;
+  delay += 0.5;
+
+  for (let i = 0; i < 2; i++) {
+    const action = actions[Math.floor(Math.random() * actions.length)];
+    html += `<div class="fight-action" style="animation-delay: ${delay}s;">${action}</div>`;
+    delay += 0.6;
+  }
+
+  // WINNER
+  const winnerPodcast = podcasts[winner];
+  const winnerStats = winner === 1 ? stats1 : stats2;
+  const loserStats = winner === 1 ? stats2 : stats1;
+
+  let explanation = '';
+  if (winnerStats.episodeCount > loserStats.episodeCount) {
+    explanation += `<strong>${podcasts[winner].title}</strong> released <strong>${winnerStats.episodeCount}</strong> episode${winnerStats.episodeCount > 1 ? 's' : ''} today vs ${loserStats.episodeCount} for its opponent. `;
+  }
+  if (winnerStats.totalMinutes > loserStats.totalMinutes) {
+    explanation += `With <strong>${winnerStats.totalMinutes}</strong> minutes of content, it dominated the airwaves. `;
+  }
+  if (winnerStats.avgDuration > loserStats.avgDuration) {
+    explanation += `Average episode duration of <strong>${winnerStats.avgDuration}m</strong> shows quality content!`;
+  }
+
+  html += `
+    <div class="winner-section" style="animation-delay: ${delay}s;">
+      <div class="round-title">🏆 WINNER 🏆</div>
+      <div class="winner-image">
+        ${winnerPodcast.image ? `<img src="${winnerPodcast.image}" alt="${winnerPodcast.title}">` : '<div style="background: #f0f0f0; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">📻</div>'}
+      </div>
+      <div class="winner-name">${winnerPodcast.title}</div>
+      <div class="winner-title">CHAMPION!</div>
+      <div class="winner-explanation">${explanation}</div>
+      <button class="close-fight" onclick="document.getElementById('fightModal').classList.remove('show');">CLOSE</button>
+    </div>
+  `;
+
+  content.innerHTML = html;
+}
