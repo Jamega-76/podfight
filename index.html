@@ -31,18 +31,21 @@
     }
 
     .logo {
-      max-width: 400px;
+      max-width: 450px;
       height: auto;
       margin: 0 auto;
     }
 
-    /* Input Section */
+    /* Input Section - Arena Layout */
     .input-wrapper {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 40px;
       margin-bottom: 60px;
-      align-items: start;
+      align-items: center;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .input-column {
@@ -52,15 +55,21 @@
     }
 
     .input-label {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
       color: #333;
+      text-align: center;
+    }
+
+    .input-box {
+      width: 100%;
     }
 
     .input-box input {
-      padding: 12px 16px;
+      width: 100%;
+      padding: 14px 16px;
       border: 2px solid #ddd;
       background: #fff;
       color: #333;
@@ -75,22 +84,21 @@
       box-shadow: 0 0 10px rgba(255, 137, 171, 0.2);
     }
 
-    /* Versus Section */
-    .versus-section {
+    /* Versus Section - Center */
+    .versus-center {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 30px;
-      margin-bottom: 60px;
+      gap: 10px;
     }
 
     .versus-icon {
-      font-size: 120px;
+      font-size: 60px;
       line-height: 1;
     }
 
     .versus-text {
-      font-size: 32px;
+      font-size: 24px;
       font-weight: 900;
       text-transform: uppercase;
       background: linear-gradient(45deg, #ff89ab, #ffd709);
@@ -453,7 +461,7 @@
       <img src="logo.png" alt="Podcast Fighter II Turbo" class="logo" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));">
     </div>
 
-    <!-- Input Section -->
+    <!-- Input Section with Versus Center -->
     <div class="input-wrapper">
       <div class="input-column">
         <div class="input-label">🎮 Player One</div>
@@ -461,21 +469,19 @@
           <input type="text" id="rss-1" placeholder="Paste RSS feed URL...">
         </div>
       </div>
+
+      <div class="versus-center">
+        <div class="versus-icon">⚡</div>
+        <div class="versus-text">VS</div>
+        <div class="versus-icon">⚡</div>
+      </div>
+
       <div class="input-column">
         <div class="input-label">🎮 Player Two</div>
         <div class="input-box">
           <input type="text" id="rss-2" placeholder="Paste RSS feed URL...">
         </div>
       </div>
-    </div>
-
-    <!-- Versus Section -->
-    <div class="versus-section">
-      <div style="width: 100%; height: 2px; background: #ddd;"></div>
-      <div class="versus-icon">⚡</div>
-      <div class="versus-text">Versus</div>
-      <div class="versus-icon">⚡</div>
-      <div style="width: 100%; height: 2px; background: #ddd;"></div>
     </div>
 
     <!-- Insert Coin Button -->
