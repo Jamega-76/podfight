@@ -575,6 +575,17 @@
       }
     }
 
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+      }
+    }
+
     .winner-section {
       margin-top: 40px;
       opacity: 0;
@@ -680,9 +691,9 @@
     <!-- Input Section with Versus Center -->
     <div class="input-wrapper">
       <div class="input-column">
-        <div class="input-label">🎮 Player One</div>
+        <div class="input-label">🎮 Joueur Un</div>
         <div class="input-box">
-          <input type="text" id="rss-1" placeholder="Paste RSS feed URL...">
+          <input type="text" id="rss-1" placeholder="Collez l'URL du flux RSS...">
         </div>
       </div>
 
@@ -693,16 +704,16 @@
       </div>
 
       <div class="input-column">
-        <div class="input-label">🎮 Player Two</div>
+        <div class="input-label">🎮 Joueur Deux</div>
         <div class="input-box">
-          <input type="text" id="rss-2" placeholder="Paste RSS feed URL...">
+          <input type="text" id="rss-2" placeholder="Collez l'URL du flux RSS...">
         </div>
       </div>
     </div>
 
     <!-- Insert Coin Button -->
     <div class="btn-container">
-      <button class="btn-insert-coin" onclick="loadBoth()">INSERT COIN</button>
+      <button class="btn-insert-coin" onclick="loadBoth()">🪙 INSÉRER PIÈCE</button>
       <div id="error-msg" style="margin-top: 15px;"></div>
     </div>
 
@@ -710,7 +721,7 @@
     <div class="results-section" id="results">
       <!-- Episodes Today -->
       <div class="episodes-today" id="episodes-today-section" style="display: none;">
-        <div class="section-title">📻 Episodes Released Today</div>
+        <div class="section-title">📻 Épisodes Sortis Aujourd'hui</div>
         <div class="episodes-grid" id="episodes-grid"></div>
       </div>
 
@@ -719,13 +730,13 @@
 
       <!-- Timeline -->
       <div class="timeline-section" id="timeline-section" style="display: none;">
-        <div class="section-title">📈 Last 7 Days Comparison</div>
+        <div class="section-title">📈 Comparaison 7 Derniers Jours</div>
         <div class="timeline-container" id="timeline"></div>
       </div>
 
       <!-- Heatmap -->
       <div class="heatmap-section" id="heatmap-section" style="display: none;">
-        <div class="section-title">📅 Most Active Days (Last 10 Days)</div>
+        <div class="section-title">📅 Jours les Plus Actifs (10 Derniers Jours)</div>
         <div class="heatmap-grid" id="heatmap"></div>
       </div>
     </div>

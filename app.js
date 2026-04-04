@@ -1,4 +1,17 @@
 const podcasts = {};
+let pageLoadTime = Date.now();
+const MIN_LOAD_TIME = 30000; // 30 seconds
+
+// Check if it's time to show the Konami button
+function checkShowKonamiButton() {
+  const now = Date.now();
+  const elapsedTime = now - pageLoadTime;
+
+  // Show button only if both podcasts are loaded AND 30 seconds have passed
+  if (podcasts[1] && podcasts[2] && elapsedTime >= MIN_LOAD_TIME) {
+    document.getElementById('fight-button-container').style.display = 'flex';
+  }
+}
 
 async function loadBoth() {
   const rss1 = document.getElementById('rss-1').value.trim();
@@ -8,13 +21,13 @@ async function loadBoth() {
   errorMsg.innerHTML = '';
 
   if (!rss1 || !rss2) {
-    errorMsg.innerHTML = '<div class="error">Please enter both RSS feed URLs</div>';
+    errorMsg.innerHTML = '<div class="error">Veuillez entrer les deux URL de flux RSS</div>';
     return;
   }
 
   try {
-    errorMsg.innerHTML = '<div class="success">Loading...</div>';
-    
+    errorMsg.innerHTML = '<div class="success">Chargement...</div>';
+
     const [p1, p2] = await Promise.all([
       fetchAndParseRSS(rss1),
       fetchAndParseRSS(rss2)
@@ -25,7 +38,9 @@ async function loadBoth() {
 
     errorMsg.innerHTML = '';
     document.getElementById('results').style.display = 'block';
-    document.getElementById('fight-button-container').style.display = 'flex';
+
+    // Check if button should be shown
+    checkShowKonamiButton();
 
     renderPodcastCards();
     renderEpisodesToday();
@@ -35,7 +50,7 @@ async function loadBoth() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (error) {
     console.error('Error:', error);
-    errorMsg.innerHTML = `<div class="error">Error loading podcasts: ${error.message}</div>`;
+    errorMsg.innerHTML = `<div class="error">Erreur lors du chargement des podcasts: ${error.message}</div>`;
   }
 }
 
@@ -52,7 +67,7 @@ async function fetchAndParseRSS(url) {
 
   const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
   const response = await fetch(proxyUrl);
-  if (!response.ok) throw new Error('Failed to fetch RSS feed');
+  if (!response.ok) throw new Error('Impossible de récupérer le flux RSS');
 
   const xml = await response.text();
   return parseRSSXML(xml);
@@ -63,10 +78,10 @@ function parseRSSXML(xml) {
   const doc = parser.parseFromString(xml, 'text/xml');
 
   if (doc.getElementsByTagName('parsererror').length) {
-    throw new Error('Invalid RSS feed format');
+    throw new Error('Format de flux RSS invalide');
   }
 
-  const title = doc.querySelector('channel > title')?.textContent || 'Unknown Podcast';
+  const title = doc.querySelector('channel > title')?.textContent || 'Podcast Inconnu';
   const description = doc.querySelector('channel > description')?.textContent || '';
 
   let image = '';
@@ -78,7 +93,7 @@ function parseRSSXML(xml) {
   const episodes = [];
 
   items.forEach(item => {
-    const episodeTitle = item.querySelector('title')?.textContent || 'Untitled';
+    const episodeTitle = item.querySelector('title')?.textContent || 'Sans titre';
     const episodeDesc = item.querySelector('description')?.textContent || '';
     const pubDate = item.querySelector('pubDate')?.textContent || '';
 
@@ -122,7 +137,7 @@ function renderPodcastCards() {
         ${p.image ? `<div class="podcast-image"><img src="${p.image}" alt="${p.title}"></div>` : '<div class="podcast-image">📻</div>'}
         <div class="podcast-title">${p.title}</div>
         <div class="podcast-description">${p.description}</div>
-        <div class="podcast-episodes-count">${p.episodes.length} Episodes</div>
+        <div class="podcast-episodes-count">${p.episodes.length} Épisodes</div>
       </div>
     `;
   });
@@ -159,29 +174,29 @@ function renderEpisodesToday() {
 
   let html = '<div class="episodes-grid">';
 
-  // Player One
+  // Joueur Un
   html += `<div class="episodes-list">`;
-  html += `<h4>🎮 PLAYER ONE — ${todayEps1.length} Episode${todayEps1.length !== 1 ? 's' : ''}</h4>`;
+  html += `<h4>🎮 JOUEUR UN — ${todayEps1.length} Épisode${todayEps1.length !== 1 ? 's' : ''}</h4>`;
   if (todayEps1.length > 0) {
     todayEps1.forEach(ep => {
       html += `<div class="episode-item">📌 ${ep.title}</div>`;
     });
-    html += `<div class="duration-box"><div class="duration-label">Average Duration</div><div class="duration-value">${avgDur1}m</div></div>`;
+    html += `<div class="duration-box"><div class="duration-label">Durée Moyenne</div><div class="duration-value">${avgDur1}m</div></div>`;
   } else {
-    html += `<div class="episode-item" style="color: #999; font-style: italic;">No episodes released today</div>`;
+    html += `<div class="episode-item" style="color: #999; font-style: italic;">Aucun épisode sorti aujourd'hui</div>`;
   }
   html += `</div>`;
 
-  // Player Two
+  // Joueur Deux
   html += `<div class="episodes-list">`;
-  html += `<h4>🎮 PLAYER TWO — ${todayEps2.length} Episode${todayEps2.length !== 1 ? 's' : ''}</h4>`;
+  html += `<h4>🎮 JOUEUR DEUX — ${todayEps2.length} Épisode${todayEps2.length !== 1 ? 's' : ''}</h4>`;
   if (todayEps2.length > 0) {
     todayEps2.forEach(ep => {
       html += `<div class="episode-item">📌 ${ep.title}</div>`;
     });
-    html += `<div class="duration-box"><div class="duration-label">Average Duration</div><div class="duration-value" style="color: #ffd709;">${avgDur2}m</div></div>`;
+    html += `<div class="duration-box"><div class="duration-label">Durée Moyenne</div><div class="duration-value" style="color: #ffd709;">${avgDur2}m</div></div>`;
   } else {
-    html += `<div class="episode-item" style="color: #999; font-style: italic;">No episodes released today</div>`;
+    html += `<div class="episode-item" style="color: #999; font-style: italic;">Aucun épisode sorti aujourd'hui</div>`;
   }
   html += `</div>`;
 
@@ -227,7 +242,7 @@ function renderTimeline() {
   section.style.display = 'block';
 
   let html = '';
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
 
   for (let i = 0; i < 7; i++) {
     const d = dates[i];
@@ -273,7 +288,7 @@ function renderHeatmap() {
   let html = '<div class="heatmap-grid">';
 
   [1, 2].forEach(num => {
-    html += `<div class="heatmap-column"><h4>🎮 Player ${num === 1 ? 'One' : 'Two'}</h4><div class="weekdays">`;
+    html += `<div class="heatmap-column"><h4>🎮 ${num === 1 ? 'JOUEUR UN' : 'JOUEUR DEUX'}</h4><div class="weekdays">`;
 
     const dayCounts = {};
     days10.forEach(d => {
@@ -291,16 +306,22 @@ function renderHeatmap() {
       dayCounts[dow] += eps.length;
     });
 
-    const maxDay = Math.max(...Object.values(dayCounts), 1);
+    // Find this player's best day
+    const maxCountForPlayer = Math.max(...Object.values(dayCounts), 1);
 
     dayNames.forEach((name, idx) => {
       const count = dayCounts[idx] || 0;
-      const intensity = maxDay > 0 ? count / maxDay : 0;
+      const intensity = maxCountForPlayer > 0 ? count / maxCountForPlayer : 0;
       const bgColor = `rgba(${num === 1 ? '255, 137, 171' : '255, 215, 9'}, ${0.05 + intensity * 0.3})`;
-      const borderColor = intensity > 0.5 ? (num === 1 ? '#ff89ab' : '#ffd709') : '#eee';
+
+      // Highlight this player's best day(s)
+      const isBestDay = count === maxCountForPlayer && count > 0;
+      const borderColor = isBestDay ? (num === 1 ? '#ff89ab' : '#ffd709') : '#eee';
+      const borderWidth = isBestDay ? '3px' : '1px';
+      const boxShadow = isBestDay ? (num === 1 ? '0 0 12px rgba(255, 137, 171, 0.6)' : '0 0 12px rgba(255, 215, 9, 0.6)') : 'none';
 
       html += `
-        <div class="day-cell" style="background: ${bgColor}; border-color: ${borderColor};">
+        <div class="day-cell" style="background: ${bgColor}; border-color: ${borderColor}; border-width: ${borderWidth}; box-shadow: ${boxShadow};">
           <div class="day-count">${count}</div>
           <div class="day-label">${name}</div>
         </div>
@@ -317,7 +338,7 @@ function renderHeatmap() {
 // FIGHT SYSTEM
 function startFight() {
   if (!podcasts[1] || !podcasts[2]) {
-    alert('Load both podcasts first!');
+    alert('Chargez les deux podcasts d\'abord!');
     return;
   }
 
@@ -353,35 +374,22 @@ function determineWinner() {
   const stats1 = getTodayStats(1);
   const stats2 = getTodayStats(2);
 
-  // Scoring algorithm
-  let score1 = 0;
-  let score2 = 0;
-
-  // Episodes count (most important)
+  // Primary: Episodes count wins
   if (stats1.episodeCount > stats2.episodeCount) {
-    score1 += 40;
+    return 1;
   } else if (stats2.episodeCount > stats1.episodeCount) {
-    score2 += 40;
-  } else if (stats1.episodeCount > 0) {
-    score1 += 20;
-    score2 += 20;
+    return 2;
   }
 
-  // Average duration
-  if (stats1.avgDuration > stats2.avgDuration) {
-    score1 += 20;
-  } else if (stats2.avgDuration > stats1.avgDuration) {
-    score2 += 20;
-  }
-
-  // Total content (minutes)
+  // Tiebreaker: Total duration of today's episodes
   if (stats1.totalMinutes > stats2.totalMinutes) {
-    score1 += 40;
+    return 1;
   } else if (stats2.totalMinutes > stats1.totalMinutes) {
-    score2 += 40;
+    return 2;
   }
 
-  return score1 > score2 ? 1 : score2 > score1 ? 2 : 1;
+  // If completely tied, player 1 wins by default
+  return 1;
 }
 
 function runFightAnimation() {
@@ -391,16 +399,16 @@ function runFightAnimation() {
   const stats2 = getTodayStats(2);
 
   const actions = [
-    '💥 POWER PUNCH!',
-    '⚡ LIGHTNING STRIKE!',
-    '🔥 FIRE ATTACK!',
+    '💥 COUP PUISSANT!',
+    '⚡ ÉCLAIR FULGURANT!',
+    '🔥 ATTAQUE INCENDIAIRE!',
     '💣 EXPLOSION!',
-    '🌟 SPECIAL MOVE!',
-    '⚙️ COMBO HIT!',
-    '🎯 DIRECT HIT!',
-    '💫 ULTIMATE ATTACK!',
-    '🌪️ TORNADO KICK!',
-    '⭐ MEGA BLAST!'
+    '🌟 COUP SPÉCIAL!',
+    '⚙️ COMBO CHAÎNÉ!',
+    '🎯 COUP DIRECT!',
+    '💫 ATTAQUE ULTIME!',
+    '🌪️ COUP DE TORNADE!',
+    '⭐ MÉGA EXPLOSION!'
   ];
 
   // ÉTAPE 1 (0-2s)
@@ -431,25 +439,24 @@ function runFightAnimation() {
 
     let explanation = '';
     if (winnerStats.episodeCount > loserStats.episodeCount) {
-      explanation += `<strong>${podcasts[winner].title}</strong> released <strong>${winnerStats.episodeCount}</strong> episode${winnerStats.episodeCount > 1 ? 's' : ''} today vs ${loserStats.episodeCount}. `;
+      explanation += `<strong>${podcasts[winner].title}</strong> a sorti <strong>${winnerStats.episodeCount}</strong> épisode${winnerStats.episodeCount > 1 ? 's' : ''} aujourd'hui vs ${loserStats.episodeCount}. `;
     }
     if (winnerStats.totalMinutes > loserStats.totalMinutes) {
-      explanation += `<strong>${winnerStats.totalMinutes}</strong> minutes of content vs ${loserStats.totalMinutes}. `;
+      explanation += `<strong>${winnerStats.totalMinutes}</strong> minutes de contenu vs ${loserStats.totalMinutes}. `;
     }
     if (winnerStats.avgDuration > loserStats.avgDuration) {
-      explanation += `Average duration: <strong>${winnerStats.avgDuration}m</strong> vs ${loserStats.avgDuration}m!`;
+      explanation += `Durée moyenne: <strong>${winnerStats.avgDuration}m</strong> vs ${loserStats.avgDuration}m!`;
     }
 
     let html = `
       <div class="winner-section" style="animation-delay: 0.5s;">
-        <div class="round-title">🏆 WINNER 🏆</div>
-        <div class="winner-image">
-          ${winnerPodcast.image ? `<img src="${winnerPodcast.image}" alt="${winnerPodcast.title}">` : '<div style="background: #f0f0f0; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 80px;">📻</div>'}
+        <div class="winner-image" style="width: 300px; height: 300px; margin: 0 auto 40px; box-shadow: 0 0 60px rgba(255, 215, 9, 0.8); border-width: 6px;">
+          ${winnerPodcast.image ? `<img src="${winnerPodcast.image}" alt="${winnerPodcast.title}">` : '<div style="background: #f0f0f0; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 120px;">📻</div>'}
         </div>
-        <div class="winner-name">${winnerPodcast.title}</div>
-        <div class="winner-title">CHAMPION!</div>
-        <div class="winner-explanation">${explanation}</div>
-        <button class="close-fight" onclick="document.getElementById('fightModal').classList.remove('show');">CLOSE</button>
+        <div style="font-size: 4.5em; font-weight: 900; margin-bottom: 20px; color: #ffd709; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 20px rgba(255, 215, 9, 0.6);">${winnerPodcast.title}</div>
+        <div style="font-size: 3.5em; color: #ff89ab; margin-bottom: 40px; font-weight: 700; letter-spacing: 2px; animation: pulse 1s infinite;">WIN!!!!</div>
+        <div style="font-size: 1.2em; line-height: 2; color: #ccc; text-align: left; max-width: 700px; margin: 0 auto; padding: 30px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; border-left: 4px solid #ffd709;">${explanation}</div>
+        <button class="close-fight" onclick="document.getElementById('fightModal').classList.remove('show');" style="margin-top: 40px;">FERMER</button>
       </div>
     `;
     content.innerHTML = html;
