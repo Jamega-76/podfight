@@ -1,6 +1,7 @@
 const podcasts = {};
 let pageLoadTime = Date.now();
 const MIN_LOAD_TIME = 30000; // 30 seconds
+const MAX_HISTORY = 10; // Maximum number of battles to keep in history
 
 // Check if it's time to show the Konami button
 function checkShowKonamiButton() {
@@ -39,6 +40,9 @@ async function loadBoth() {
     errorMsg.innerHTML = '';
     document.getElementById('results').style.display = 'block';
 
+    // Save battle to history
+    saveBattle(rss1, p1.title, p1.image, rss2, p2.title, p2.image);
+
     // Check if button should be shown
     checkShowKonamiButton();
 
@@ -52,6 +56,121 @@ async function loadBoth() {
     console.error('Error:', error);
     errorMsg.innerHTML = `<div class="error">Erreur lors du chargement des podcasts: ${error.message}</div>`;
   }
+}
+
+// Battle History Management
+function saveBattle(url1, title1, image1, url2, title2, image2) {
+  const battles = getBattleHistory();
+
+  const newBattle = {
+    url1,
+    title1,
+    image1,
+    url2,
+    title2,
+    image2,
+    timestamp: new Date().toISOString()
+  };
+
+  // Check if this exact battle already exists at the top (avoid duplicates)
+  if (battles.length > 0) {
+    const lastBattle = battles[0];
+    if (lastBattle.url1 === url1 && lastBattle.url2 === url2) {
+      return; // Don't save duplicate
+    }
+  }
+
+  battles.unshift(newBattle);
+
+  // Keep only the last 10 battles
+  if (battles.length > MAX_HISTORY) {
+    battles.pop();
+  }
+
+  localStorage.setItem('podcastFighterHistory', JSON.stringify(battles));
+}
+
+function getBattleHistory() {
+  const stored = localStorage.getItem('podcastFighterHistory');
+  return stored ? JSON.parse(stored) : [];
+}
+
+function showHistoryModal() {
+  const modal = document.getElementById('historyModal');
+  const grid = document.getElementById('historyGrid');
+  const battles = getBattleHistory();
+
+  if (battles.length === 0) {
+    grid.innerHTML = '<div class="history-empty">Aucune battle enregistrée</div>';
+  } else {
+    grid.innerHTML = battles.map((battle, idx) => {
+      const date = new Date(battle.timestamp);
+      const dateStr = date.toLocaleDateString('fr-FR', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      return `
+        <div class="battle-card" data-url1="${escapeHtml(battle.url1)}" data-url2="${escapeHtml(battle.url2)}" onclick="loadBattleFromHistoryCard(this)">
+          <div class="battle-images">
+            <div class="battle-image">
+              ${battle.image1 ? `<img src="${battle.image1}" alt="${battle.title1}">` : '📻'}
+            </div>
+            <div class="battle-vs">VS</div>
+            <div class="battle-image">
+              ${battle.image2 ? `<img src="${battle.image2}" alt="${battle.title2}">` : '📻'}
+            </div>
+          </div>
+          <div class="battle-names">
+            <div class="battle-names-item">${battle.title1}</div>
+            <div class="battle-names-item">${battle.title2}</div>
+          </div>
+          <div class="battle-date">${dateStr}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  modal.classList.add('show');
+}
+
+function closeHistoryModal() {
+  document.getElementById('historyModal').classList.remove('show');
+}
+
+function escapeHtml(text) {
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return text.replace(/[&<>"']/g, m => map[m]);
+}
+
+function loadBattleFromHistoryCard(element) {
+  const url1 = element.dataset.url1;
+  const url2 = element.dataset.url2;
+  loadBattleFromHistory(url1, url2);
+}
+
+function loadBattleFromHistory(url1, url2) {
+  // Fill in the input fields
+  document.getElementById('rss-1').value = url1;
+  document.getElementById('rss-2').value = url2;
+
+  // Close the modal
+  closeHistoryModal();
+
+  // Scroll to the input area
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // User must click INSERT COIN to load
+  const errorMsg = document.getElementById('error-msg');
+  errorMsg.innerHTML = '<div class="success">URLs remplies! Cliquez sur INSÉRER PIÈCE pour charger.</div>';
 }
 
 async function fetchAndParseRSS(url) {
