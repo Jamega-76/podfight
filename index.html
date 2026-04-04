@@ -1,500 +1,486 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Podcast Fighter II Turbo</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&display=swap" rel="stylesheet"/>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
-      background: linear-gradient(135deg, #F0F0F0 0%, #FFFFFF 100%);
-      font-family: 'Space Grotesk', sans-serif;
-      color: #000;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      min-height: 100vh;
     }
-    .topbar {
-      background: white;
-      border-bottom: 1px solid #EEE;
-      padding: 12px 32px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .logo-image {
-      height: 40px;
-    }
-    .menu-links {
-      display: flex;
-      gap: 24px;
-      align-items: center;
-    }
-    .menu-link {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #FF89AB;
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .menu-link:hover {
-      color: #FFD709;
-    }
+
     .container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       padding: 40px 20px;
     }
-    .inputs-section {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 30px;
+
+    /* Logo Section */
+    .logo-section {
+      text-align: center;
+      margin-bottom: 60px;
     }
-    .input-card {
-      background: white;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+
+    .logo {
+      max-width: 500px;
+      height: auto;
+      margin: 0 auto 30px;
+      filter: drop-shadow(0 0 20px rgba(255, 137, 171, 0.5));
     }
-    .input-label {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 12px;
+
+    /* Input Section */
+    .input-section {
+      max-width: 600px;
+      margin: 0 auto 40px;
       display: flex;
-      align-items: center;
-      gap: 8px;
+      flex-direction: column;
+      gap: 20px;
     }
-    .input-label.p1 { color: #FF89AB; }
-    .input-label.p2 { color: #FFD709; }
-    input {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #DDD;
-      border-radius: 6px;
-      font-family: 'Space Grotesk', monospace;
-      font-size: 13px;
-      background: #FAFAFA;
-      margin-bottom: 8px;
+
+    .input-box {
+      display: flex;
+      flex-direction: column;
     }
-    input:focus {
-      outline: none;
-      border-color: #FF89AB;
-      background: white;
-    }
-    .insert-coin-btn {
-      background: linear-gradient(135deg, #FF89AB, #FF6B8F);
-      color: white;
-      border: none;
-      padding: 16px 48px;
-      border-radius: 50px;
-      font-weight: 900;
-      font-size: 16px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(255, 137, 171, 0.3);
-      display: block;
-      margin: 20px auto;
+
+    .input-box input {
+      padding: 15px;
+      border: 2px solid #ff89ab;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 14px;
+      border-radius: 4px;
+      backdrop-filter: blur(10px);
       transition: all 0.3s;
     }
-    .insert-coin-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 137, 171, 0.4);
+
+    .input-box input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
     }
-    .arena {
+
+    .input-box input:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 20px rgba(255, 137, 171, 0.3);
+    }
+
+    /* Button */
+    .btn-container {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .btn-insert-coin {
+      padding: 20px 60px;
+      font-size: 24px;
+      font-weight: bold;
+      text-transform: uppercase;
+      background: linear-gradient(45deg, #ff89ab, #ffd709);
+      border: 3px solid #fff;
+      color: #000;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s;
+      box-shadow: 0 0 30px rgba(255, 137, 171, 0.5);
+      letter-spacing: 2px;
+    }
+
+    .btn-insert-coin:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 50px rgba(255, 137, 171, 0.8);
+    }
+
+    .btn-insert-coin:active {
+      transform: scale(0.95);
+    }
+
+    /* Results Section */
+    .results-section {
+      display: none;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Podcast Cards */
+    .podcast-cards {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 30px;
+      gap: 40px;
+      margin-bottom: 60px;
     }
+
     .podcast-card {
-      background: white;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      text-align: center;
-    }
-    .podcast-image {
-      width: 120px;
-      height: 120px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid #ff89ab;
+      padding: 30px;
       border-radius: 8px;
-      object-fit: cover;
-      margin: 0 auto 16px;
-    }
-    .podcast-title {
-      font-size: 16px;
-      font-weight: 900;
-      margin-bottom: 8px;
-      line-height: 1.3;
-    }
-    .podcast-desc {
-      font-size: 13px;
-      color: #666;
-      line-height: 1.5;
-      margin-bottom: 12px;
-    }
-    .episode-count {
-      font-size: 12px;
-      color: #999;
-      font-weight: 700;
-    }
-    .stats-section {
-      display: none;
-    }
-    .stats-section.show {
-      display: block;
-    }
-    .stats-title {
-      font-size: 20px;
-      font-weight: 900;
+      backdrop-filter: blur(10px);
       text-align: center;
-      margin-bottom: 30px;
-      text-transform: uppercase;
+      transition: all 0.3s;
     }
-    .stat-card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      margin-bottom: 20px;
+
+    .podcast-card:hover {
+      border-color: #ffd709;
+      box-shadow: 0 0 30px rgba(255, 215, 9, 0.3);
     }
-    .stat-label {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-      letter-spacing: 1px;
-    }
-    .bar-container {
-      display: flex;
-      height: 40px;
-      background: #F5F5F5;
-      border-radius: 6px;
+
+    .podcast-image {
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 20px;
+      border-radius: 8px;
       overflow: hidden;
-      margin-bottom: 12px;
-      position: relative;
-    }
-    .bar {
-      flex: 1;
+      background: rgba(255, 255, 255, 0.1);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 13px;
-      color: white;
-      transition: flex 0.3s;
+      font-size: 80px;
     }
-    .bar.p1 { background: linear-gradient(135deg, #FF89AB, #FF6B8F); }
-    .bar.p2 { background: linear-gradient(135deg, #FFD709, #FFC700); }
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-    .heatmap {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 8px;
-    }
-    .day-cell {
-      text-align: center;
-    }
-    .day-box {
-      width: 100%;
-      aspect-ratio: 1;
-      border-radius: 4px;
-      margin-bottom: 6px;
-      border: 1px solid #DDD;
-      transition: all 0.3s;
-    }
-    .day-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: #666;
-    }
-    .day-count {
-      font-size: 10px;
-      font-weight: 700;
-      margin-top: 4px;
-    }
-    .konami-btn {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: linear-gradient(135deg, #FF89AB, #FFD709);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 12px;
-      text-transform: uppercase;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(255, 137, 171, 0.3);
-      display: none;
-      z-index: 40;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 4px 15px rgba(255, 137, 171, 0.3); }
-      50% { box-shadow: 0 6px 25px rgba(255, 137, 171, 0.6); }
-    }
-    .konami-btn:hover {
-      transform: scale(1.05);
-      animation: none;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
+
+    .podcast-image img {
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.9);
-      z-index: 50;
-      align-items: center;
-      justify-content: center;
+      object-fit: cover;
     }
-    .modal.show {
-      display: flex;
+
+    .podcast-title {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #ff89ab;
     }
-    .modal-content {
-      background: white;
-      border-radius: 12px;
-      padding: 32px;
-      max-width: 600px;
-      max-height: 80vh;
-      overflow-y: auto;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-    }
-    .modal-title {
-      font-size: 24px;
-      font-weight: 900;
-      margin-bottom: 20px;
-      background: linear-gradient(45deg, #FF89AB, #FFD709);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .fight-log {
-      background: #F5F5F5;
-      padding: 16px;
-      border-radius: 6px;
-      margin-bottom: 20px;
-      min-height: 150px;
-      max-height: 300px;
-      overflow-y: auto;
-      font-size: 13px;
+
+    .podcast-description {
+      font-size: 0.95em;
+      color: #ccc;
+      margin-bottom: 15px;
       line-height: 1.6;
     }
-    .fight-action {
-      margin-bottom: 8px;
-      animation: slideIn 0.4s ease-out;
+
+    .podcast-episodes-count {
+      font-size: 0.9em;
+      color: #ffd709;
+      font-weight: bold;
     }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .winner-display {
-      text-align: center;
-      padding: 20px 0;
-    }
-    .winner-image {
-      width: 140px;
-      height: 140px;
+
+    /* Episodes Today Section */
+    .episodes-today {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid #ffd709;
+      padding: 30px;
       border-radius: 8px;
-      object-fit: cover;
-      margin: 0 auto 20px;
-      display: block;
+      backdrop-filter: blur(10px);
+      margin-bottom: 60px;
     }
-    .winner-name {
-      font-size: 20px;
-      font-weight: 900;
-      margin-bottom: 16px;
-    }
-    .winner-text {
-      font-size: 48px;
-      font-weight: 900;
-      background: linear-gradient(45deg, #FF89AB, #FFD709);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: bounce 0.6s infinite;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-    .close-btn {
-      width: 100%;
-      background: linear-gradient(135deg, #FF89AB, #FF6B8F);
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 6px;
-      font-weight: 700;
+
+    .section-title {
+      font-size: 1.3em;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #ffd709;
       text-transform: uppercase;
-      cursor: pointer;
-      margin-top: 20px;
+      letter-spacing: 1px;
     }
-    .recent-battle-item {
-      background: #F5F5F5;
+
+    .episodes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .episodes-list {
+      text-align: left;
+    }
+
+    .episode-item {
+      background: rgba(255, 255, 255, 0.05);
       padding: 12px;
-      border-radius: 6px;
-      margin-bottom: 8px;
-      cursor: pointer;
+      margin-bottom: 10px;
+      border-left: 3px solid #ff89ab;
+      border-radius: 4px;
+      font-size: 0.9em;
+      line-height: 1.5;
+    }
+
+    .episodes-list:nth-child(2) .episode-item {
+      border-left-color: #ffd709;
+    }
+
+    .avg-duration {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 1.2em;
+    }
+
+    .duration-value {
+      font-size: 2em;
+      font-weight: bold;
+      color: #ff89ab;
+      margin: 10px 0;
+    }
+
+    .episodes-list:nth-child(2) .duration-value {
+      color: #ffd709;
+    }
+
+    /* Timeline Section */
+    .timeline-section {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid #ff89ab;
+      padding: 30px;
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+      margin-bottom: 60px;
+    }
+
+    .timeline-container {
+      display: flex;
+      gap: 15px;
+      align-items: flex-end;
+      margin-top: 30px;
+      height: 200px;
+      overflow-x: auto;
+    }
+
+    .timeline-bar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      min-width: 60px;
+    }
+
+    .bar-label {
+      font-size: 0.8em;
+      text-align: center;
+      width: 60px;
+      order: 3;
+      color: #ccc;
+    }
+
+    .bar-container {
+      width: 60px;
+      height: 150px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      order: 2;
+    }
+
+    .bar {
+      flex: 1;
+      border-radius: 2px;
       transition: all 0.3s;
     }
-    .recent-battle-item:hover {
-      background: #EEE;
-      transform: translateX(4px);
+
+    .bar-1 {
+      background: linear-gradient(180deg, #ff89ab, #ff6b8f);
     }
-    .battle-date {
-      font-size: 11px;
+
+    .bar-2 {
+      background: linear-gradient(180deg, #ffd709, #efc900);
+    }
+
+    .bar:hover {
+      filter: brightness(1.2);
+    }
+
+    .bar-count {
+      font-size: 0.85em;
+      font-weight: bold;
+      order: 1;
+      color: #fff;
+    }
+
+    /* Heatmap Section */
+    .heatmap-section {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid #ffd709;
+      padding: 30px;
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+    }
+
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 30px;
+    }
+
+    .heatmap-column h4 {
+      margin-bottom: 15px;
+      color: #ff89ab;
+    }
+
+    .heatmap-column:nth-child(2) h4 {
+      color: #ffd709;
+    }
+
+    .weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+
+    .day-cell {
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s;
+      cursor: default;
+    }
+
+    .day-label {
+      font-size: 0.7em;
       color: #999;
+      margin-top: 5px;
     }
-    .battle-names {
-      font-size: 13px;
-      font-weight: 700;
-      margin-top: 4px;
+
+    .day-count {
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    .day-cell:hover {
+      border-color: #ff89ab;
+      box-shadow: 0 0 15px rgba(255, 137, 171, 0.3);
+    }
+
+    .error {
+      color: #ff6e84;
+      padding: 15px;
+      background: rgba(255, 110, 132, 0.1);
+      border-radius: 4px;
+      border: 1px solid #ff6e84;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .podcast-cards, .episodes-grid, .heatmap-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .logo {
+        max-width: 300px;
+      }
+
+      .btn-insert-coin {
+        padding: 15px 40px;
+        font-size: 18px;
+      }
+
+      .timeline-container {
+        height: 150px;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Topbar -->
-  <div class="topbar">
-    <svg class="logo-image" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" style="stop-color:#FF89AB;stop-opacity:1" />
-          <stop offset="50%" style="stop-color:#FFD709;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#FF89AB;stop-opacity:1" />
-        </linearGradient>
-      </defs>
-      <text x="100" y="50" font-family="Space Grotesk" font-size="42" font-weight="900" fill="url(#gradient)" text-anchor="middle" letter-spacing="2">PODCAST FIGHTER II</text>
-    </svg>
-    <div class="menu-links">
-      <a class="menu-link" onclick="showRecentBattles(); return false;">⚔️ Recent Battles</a>
-      <button onclick="toggleDarkMode()" style="background: none; border: none; font-size: 18px; cursor: pointer;">🌙</button>
-    </div>
-  </div>
-
-  <!-- Main Container -->
   <div class="container">
+    <!-- Logo Section -->
+    <div class="logo-section">
+      <svg class="logo" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#ff89ab;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#ffd709;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <style>
+          .arcade-text {
+            font-size: 80px;
+            font-weight: 900;
+            font-family: Arial Black, sans-serif;
+            fill: url(#grad1);
+            text-shadow: 2px 2px 0 #000, 4px 4px 0 rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+          }
+          .turbo-text {
+            font-size: 60px;
+          }
+        </style>
+        <text x="300" y="90" text-anchor="middle" class="arcade-text">PODCAST</text>
+        <text x="300" y="170" text-anchor="middle" class="arcade-text">FIGHTER II</text>
+        <text x="450" y="230" text-anchor="middle" class="arcade-text turbo-text">TURBO</text>
+      </svg>
+    </div>
+
     <!-- Input Section -->
-    <div class="inputs-section">
-      <div class="input-card">
-        <div class="input-label p1">🎙️ PLAYER 1</div>
-        <input type="text" id="rss-1" placeholder="Paste RSS feed URL..."/>
+    <div class="input-section">
+      <div class="input-box">
+        <input type="text" id="rss-1" placeholder="Podcast 1 RSS Feed URL...">
       </div>
-      <div class="input-card">
-        <div class="input-label p2">🎙️ PLAYER 2</div>
-        <input type="text" id="rss-2" placeholder="Paste RSS feed URL..."/>
+      <div class="input-box">
+        <input type="text" id="rss-2" placeholder="Podcast 2 RSS Feed URL...">
       </div>
     </div>
 
-    <!-- INSERT COIN -->
-    <button class="insert-coin-btn" onclick="loadBothPodcasts()">🪙 INSERT COIN</button>
-
-    <!-- Arena -->
-    <div class="arena" id="arena-section" style="display: none;">
-      <div class="podcast-card" id="podcast-1">
-        <div style="color: #999;">Loading...</div>
-      </div>
-      <div class="podcast-card" id="podcast-2">
-        <div style="color: #999;">Loading...</div>
-      </div>
+    <!-- Insert Coin Button -->
+    <div class="btn-container">
+      <button class="btn-insert-coin" onclick="loadBoth()">INSERT COIN</button>
+      <div id="error-msg" style="margin-top: 20px;"></div>
     </div>
 
-    <!-- Stats Section -->
-    <div class="stats-section" id="stats-section">
-      <div class="stats-title">⚔️ Battle Stats</div>
+    <!-- Results Section -->
+    <div class="results-section" id="results">
+      <!-- Podcast Cards -->
+      <div class="podcast-cards" id="podcast-cards"></div>
 
       <!-- Episodes Today -->
-      <div class="stat-card">
-        <div class="stat-label">📊 Episodes Today</div>
-        <div class="bar-container">
-          <div class="bar p1" id="bar-today-1" style="flex: 0;">
-            <span id="bar-count-1">0</span>
+      <div class="episodes-today" id="episodes-today-section" style="display: none;">
+        <div class="section-title">📻 Episodes Released Today</div>
+        <div class="episodes-grid" id="episodes-grid"></div>
+        <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div style="text-align: center;">
+            <div style="color: #ccc; margin-bottom: 10px;">Average Duration (Today)</div>
+            <div class="duration-value" id="avg-duration-1">-</div>
           </div>
-          <div class="bar p2" id="bar-today-2" style="flex: 0;">
-            <span id="bar-count-2">0</span>
+          <div style="text-align: center;">
+            <div style="color: #ccc; margin-bottom: 10px;">Average Duration (Today)</div>
+            <div class="duration-value" id="avg-duration-2" style="color: #ffd709;">-</div>
           </div>
         </div>
       </div>
 
-      <!-- 7 Days -->
-      <div class="grid-2">
-        <div class="stat-card">
-          <div class="stat-label" style="color: #FF89AB;">📈 Last 7 Days</div>
-          <div style="display: flex; gap: 3px; height: 100px; align-items: flex-end; background: #F5F5F5; padding: 8px; border-radius: 6px; margin-bottom: 12px;" id="chart-7d-1"></div>
-          <div style="font-size: 28px; font-weight: 900; color: #FF89AB;" id="total-7d-1">0</div>
-          <div style="font-size: 11px; color: #999;">episodes</div>
-        </div>
-        <div class="stat-card" style="text-align: right;">
-          <div class="stat-label" style="color: #FFD709;">📈 Last 7 Days</div>
-          <div style="display: flex; gap: 3px; height: 100px; align-items: flex-end; background: #F5F5F5; padding: 8px; border-radius: 6px; margin-bottom: 12px; justify-content: flex-end;" id="chart-7d-2"></div>
-          <div style="font-size: 28px; font-weight: 900; color: #FFD709;" id="total-7d-2">0</div>
-          <div style="font-size: 11px; color: #999;">episodes</div>
-        </div>
+      <!-- Timeline -->
+      <div class="timeline-section" id="timeline-section" style="display: none;">
+        <div class="section-title">📈 Last 7 Days Comparison</div>
+        <div class="timeline-container" id="timeline"></div>
       </div>
 
-      <!-- Most Active Days -->
-      <div class="grid-2">
-        <div class="stat-card">
-          <div class="stat-label" style="color: #FF89AB;">📅 Most Active Days</div>
-          <div class="heatmap" id="heatmap-1"></div>
-        </div>
-        <div class="stat-card" style="text-align: right;">
-          <div class="stat-label" style="color: #FFD709;">📅 Most Active Days</div>
-          <div class="heatmap" id="heatmap-2" style="direction: rtl;"></div>
-        </div>
+      <!-- Heatmap -->
+      <div class="heatmap-section" id="heatmap-section" style="display: none;">
+        <div class="section-title">📅 Most Active Days (Last 10 Days)</div>
+        <div class="heatmap-grid" id="heatmap"></div>
       </div>
-
-      <!-- Average Duration -->
-      <div class="grid-2">
-        <div class="stat-card">
-          <div class="stat-label" style="color: #FF89AB;">⏱️ Avg Duration</div>
-          <div style="font-size: 36px; font-weight: 900; color: #FF89AB;" id="duration-1">0m</div>
-        </div>
-        <div class="stat-card" style="text-align: right;">
-          <div class="stat-label" style="color: #FFD709;">⏱️ Avg Duration</div>
-          <div style="font-size: 36px; font-weight: 900; color: #FFD709;" id="duration-2">0m</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Konami Button -->
-  <button class="konami-btn" id="konami-button" onclick="triggerPodcastFight()">🎮 FIGHT</button>
-
-  <!-- Fight Modal -->
-  <div class="modal" id="fight-modal">
-    <div class="modal-content">
-      <div class="modal-title">⚡ PODCAST FIGHT ⚡</div>
-      <div class="fight-log" id="fight-log"></div>
-      <div class="winner-display" id="fight-winner"></div>
-      <button class="close-btn" onclick="document.getElementById('fight-modal').classList.remove('show')">Close</button>
-    </div>
-  </div>
-
-  <!-- Recent Battles Modal -->
-  <div class="modal" id="recent-battles-modal">
-    <div class="modal-content">
-      <div class="modal-title">⚔️ Recent Battles</div>
-      <div id="recent-battles-list"></div>
-      <button class="close-btn" onclick="document.getElementById('recent-battles-modal').classList.remove('show')">Close</button>
     </div>
   </div>
 
