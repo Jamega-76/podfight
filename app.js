@@ -13,7 +13,7 @@ async function loadBoth() {
   }
 
   try {
-    errorMsg.innerHTML = '<div style="color: #ffd709;">Loading...</div>';
+    errorMsg.innerHTML = '<div class="success">Loading...</div>';
     
     const [p1, p2] = await Promise.all([
       fetchAndParseRSS(rss1),
@@ -111,17 +111,15 @@ function parseRSSXML(xml) {
 
 function renderPodcastCards() {
   const container = document.getElementById('podcast-cards');
-  const colors = ['#ff89ab', '#ffd709'];
-
   let html = '';
+
   [1, 2].forEach(num => {
     const p = podcasts[num];
-    const color = colors[num - 1];
 
     html += `
       <div class="podcast-card">
         ${p.image ? `<div class="podcast-image"><img src="${p.image}" alt="${p.title}"></div>` : '<div class="podcast-image">📻</div>'}
-        <div class="podcast-title" style="color: ${color};">${p.title}</div>
+        <div class="podcast-title">${p.title}</div>
         <div class="podcast-description">${p.description}</div>
         <div class="podcast-episodes-count">${p.episodes.length} Episodes</div>
       </div>
@@ -160,23 +158,35 @@ function renderEpisodesToday() {
 
   let html = '<div class="episodes-grid">';
 
-  [1, 2].forEach(num => {
-    const eps = num === 1 ? todayEps1 : todayEps2;
-    const color = num === 1 ? '#ff89ab' : '#ffd709';
-    const avgDur = num === 1 ? avgDur1 : avgDur2;
-
-    html += `<div class="episodes-list">`;
-    eps.forEach(ep => {
+  // Player One
+  html += `<div class="episodes-list">`;
+  html += `<h4>🎮 Player One (${todayEps1.length} ep${todayEps1.length !== 1 ? 's' : ''})</h4>`;
+  if (todayEps1.length > 0) {
+    todayEps1.forEach(ep => {
       html += `<div class="episode-item">${ep.title}</div>`;
     });
-    html += `</div>`;
-  });
+    html += `<div class="duration-box" style="margin-top: 15px;"><div class="duration-label">Avg Duration</div><div class="duration-value">${avgDur1}m</div></div>`;
+  } else {
+    html += `<div class="episode-item" style="color: #999;">No episodes today</div>`;
+  }
+  html += `</div>`;
+
+  // Player Two
+  html += `<div class="episodes-list">`;
+  html += `<h4>🎮 Player Two (${todayEps2.length} ep${todayEps2.length !== 1 ? 's' : ''})</h4>`;
+  if (todayEps2.length > 0) {
+    todayEps2.forEach(ep => {
+      html += `<div class="episode-item">${ep.title}</div>`;
+    });
+    html += `<div class="duration-box" style="margin-top: 15px;"><div class="duration-label">Avg Duration</div><div class="duration-value" style="color: #ffd709;">${avgDur2}m</div></div>`;
+  } else {
+    html += `<div class="episode-item" style="color: #999;">No episodes today</div>`;
+  }
+  html += `</div>`;
 
   html += '</div>';
 
   document.getElementById('episodes-grid').innerHTML = html;
-  document.getElementById('avg-duration-1').textContent = avgDur1 + 'm';
-  document.getElementById('avg-duration-2').textContent = avgDur2 + 'm';
 }
 
 function renderTimeline() {
@@ -220,15 +230,16 @@ function renderTimeline() {
     const d = new Date();
     d.setDate(d.getDate() - 6 + i);
     const dayName = days[d.getDay()];
-    const h1 = (counts1[i] / maxCount) * 150;
-    const h2 = (counts2[i] / maxCount) * 150;
+    const c1 = counts1[i];
+    const c2 = counts2[i];
+    const h1 = (c1 / maxCount) * 140;
+    const h2 = (c2 / maxCount) * 140;
 
     html += `
       <div class="timeline-bar">
-        <div class="bar-count">${Math.max(counts1[i], counts2[i])}</div>
         <div class="bar-container">
-          <div class="bar bar-1" style="height: ${h1}px;"></div>
-          <div class="bar bar-2" style="height: ${h2}px;"></div>
+          <div class="bar bar-1" style="height: ${h1}px;">${c1 > 0 ? c1 : ''}</div>
+          <div class="bar bar-2" style="height: ${h2}px;">${c2 > 0 ? c2 : ''}</div>
         </div>
         <div class="bar-label">${dayName}</div>
       </div>
@@ -252,10 +263,7 @@ function renderHeatmap() {
   let html = '<div class="heatmap-grid">';
 
   [1, 2].forEach(num => {
-    const color = num === 1 ? '#ff89ab' : '#ffd709';
-    const title = num === 1 ? podcasts[1].title : podcasts[2].title;
-
-    html += `<div class="heatmap-column"><h4>${title}</h4><div class="weekdays">`;
+    html += `<div class="heatmap-column"><h4>🎮 Player ${num === 1 ? 'One' : 'Two'}</h4><div class="weekdays">`;
 
     const dayCounts = {};
     days10.forEach(d => {
@@ -278,10 +286,11 @@ function renderHeatmap() {
     dayNames.forEach((name, idx) => {
       const count = dayCounts[idx] || 0;
       const intensity = maxDay > 0 ? count / maxDay : 0;
-      const bgColor = `rgba(${num === 1 ? '255, 137, 171' : '255, 215, 9'}, ${0.1 + intensity * 0.5})`;
+      const bgColor = `rgba(${num === 1 ? '255, 137, 171' : '255, 215, 9'}, ${0.05 + intensity * 0.3})`;
+      const borderColor = intensity > 0.5 ? (num === 1 ? '#ff89ab' : '#ffd709') : '#eee';
 
       html += `
-        <div class="day-cell" style="background: ${bgColor}; border-color: ${intensity > 0.5 ? color : 'rgba(255, 255, 255, 0.1)'};">
+        <div class="day-cell" style="background: ${bgColor}; border-color: ${borderColor};">
           <div class="day-count">${count}</div>
           <div class="day-label">${name}</div>
         </div>

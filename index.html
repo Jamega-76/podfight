@@ -12,14 +12,14 @@
     }
 
     body {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      color: #fff;
-      font-family: 'Arial', sans-serif;
+      background: #f8f9fa;
+      color: #333;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       min-height: 100vh;
     }
 
     .container {
-      max-width: 1400px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 40px 20px;
     }
@@ -27,49 +27,77 @@
     /* Logo Section */
     .logo-section {
       text-align: center;
-      margin-bottom: 60px;
+      margin-bottom: 50px;
     }
 
     .logo {
-      max-width: 500px;
+      max-width: 400px;
       height: auto;
-      margin: 0 auto 30px;
-      filter: drop-shadow(0 0 20px rgba(255, 137, 171, 0.5));
+      margin: 0 auto;
     }
 
     /* Input Section */
-    .input-section {
-      max-width: 600px;
-      margin: 0 auto 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+    .input-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+      align-items: start;
     }
 
-    .input-box {
+    .input-column {
       display: flex;
       flex-direction: column;
+      gap: 15px;
+    }
+
+    .input-label {
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #333;
     }
 
     .input-box input {
-      padding: 15px;
-      border: 2px solid #ff89ab;
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
+      padding: 12px 16px;
+      border: 2px solid #ddd;
+      background: #fff;
+      color: #333;
       font-size: 14px;
       border-radius: 4px;
-      backdrop-filter: blur(10px);
       transition: all 0.3s;
-    }
-
-    .input-box input::placeholder {
-      color: rgba(255, 255, 255, 0.6);
     }
 
     .input-box input:focus {
       outline: none;
-      background: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 0 20px rgba(255, 137, 171, 0.3);
+      border-color: #ff89ab;
+      box-shadow: 0 0 10px rgba(255, 137, 171, 0.2);
+    }
+
+    /* Versus Section */
+    .versus-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .versus-icon {
+      font-size: 120px;
+      line-height: 1;
+    }
+
+    .versus-text {
+      font-size: 32px;
+      font-weight: 900;
+      text-transform: uppercase;
+      background: linear-gradient(45deg, #ff89ab, #ffd709);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
     }
 
     /* Button */
@@ -79,27 +107,27 @@
     }
 
     .btn-insert-coin {
-      padding: 20px 60px;
-      font-size: 24px;
-      font-weight: bold;
+      padding: 16px 50px;
+      font-size: 20px;
+      font-weight: 700;
       text-transform: uppercase;
       background: linear-gradient(45deg, #ff89ab, #ffd709);
-      border: 3px solid #fff;
-      color: #000;
+      border: 2px solid #ff89ab;
+      color: #fff;
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: 4px;
       transition: all 0.3s;
-      box-shadow: 0 0 30px rgba(255, 137, 171, 0.5);
-      letter-spacing: 2px;
+      box-shadow: 0 4px 12px rgba(255, 137, 171, 0.3);
+      letter-spacing: 1px;
     }
 
     .btn-insert-coin:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 50px rgba(255, 137, 171, 0.8);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(255, 137, 171, 0.4);
     }
 
     .btn-insert-coin:active {
-      transform: scale(0.95);
+      transform: translateY(0);
     }
 
     /* Results Section */
@@ -128,27 +156,21 @@
     }
 
     .podcast-card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid #ff89ab;
+      background: #fff;
+      border: 1px solid #eee;
       padding: 30px;
       border-radius: 8px;
-      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       text-align: center;
-      transition: all 0.3s;
-    }
-
-    .podcast-card:hover {
-      border-color: #ffd709;
-      box-shadow: 0 0 30px rgba(255, 215, 9, 0.3);
     }
 
     .podcast-image {
-      width: 200px;
-      height: 200px;
+      width: 180px;
+      height: 180px;
       margin: 0 auto 20px;
       border-radius: 8px;
       overflow: hidden;
-      background: rgba(255, 255, 255, 0.1);
+      background: #f0f0f0;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -162,40 +184,40 @@
     }
 
     .podcast-title {
-      font-size: 1.5em;
-      font-weight: bold;
+      font-size: 1.4em;
+      font-weight: 700;
       margin-bottom: 15px;
-      color: #ff89ab;
+      color: #333;
     }
 
     .podcast-description {
       font-size: 0.95em;
-      color: #ccc;
+      color: #666;
       margin-bottom: 15px;
       line-height: 1.6;
     }
 
     .podcast-episodes-count {
       font-size: 0.9em;
-      color: #ffd709;
-      font-weight: bold;
+      color: #ff89ab;
+      font-weight: 700;
     }
 
     /* Episodes Today Section */
     .episodes-today {
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid #ffd709;
+      background: #fff;
+      border: 1px solid #eee;
       padding: 30px;
       border-radius: 8px;
-      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       margin-bottom: 60px;
     }
 
     .section-title {
-      font-size: 1.3em;
-      font-weight: bold;
-      margin-bottom: 20px;
-      color: #ffd709;
+      font-size: 1.2em;
+      font-weight: 700;
+      margin-bottom: 25px;
+      color: #333;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
@@ -203,40 +225,52 @@
     .episodes-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 30px;
+      gap: 40px;
     }
 
     .episodes-list {
       text-align: left;
     }
 
+    .episodes-list h4 {
+      font-size: 0.95em;
+      color: #666;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
     .episode-item {
-      background: rgba(255, 255, 255, 0.05);
+      background: #f8f9fa;
       padding: 12px;
       margin-bottom: 10px;
       border-left: 3px solid #ff89ab;
       border-radius: 4px;
       font-size: 0.9em;
       line-height: 1.5;
+      color: #333;
     }
 
     .episodes-list:nth-child(2) .episode-item {
       border-left-color: #ffd709;
     }
 
-    .avg-duration {
-      background: rgba(255, 255, 255, 0.05);
+    .duration-box {
+      background: #f8f9fa;
       padding: 20px;
       border-radius: 4px;
       text-align: center;
-      font-size: 1.2em;
+    }
+
+    .duration-label {
+      font-size: 0.9em;
+      color: #666;
+      margin-bottom: 10px;
     }
 
     .duration-value {
-      font-size: 2em;
-      font-weight: bold;
+      font-size: 1.8em;
+      font-weight: 700;
       color: #ff89ab;
-      margin: 10px 0;
     }
 
     .episodes-list:nth-child(2) .duration-value {
@@ -245,47 +279,47 @@
 
     /* Timeline Section */
     .timeline-section {
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid #ff89ab;
+      background: #fff;
+      border: 1px solid #eee;
       padding: 30px;
       border-radius: 8px;
-      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       margin-bottom: 60px;
     }
 
     .timeline-container {
       display: flex;
-      gap: 15px;
+      gap: 20px;
+      justify-content: center;
       align-items: flex-end;
       margin-top: 30px;
-      height: 200px;
-      overflow-x: auto;
+      height: 180px;
+      flex-wrap: wrap;
     }
 
     .timeline-bar {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
-      min-width: 60px;
+      gap: 8px;
+      min-width: 70px;
     }
 
     .bar-label {
       font-size: 0.8em;
-      text-align: center;
-      width: 60px;
+      color: #666;
       order: 3;
-      color: #ccc;
+      font-weight: 600;
     }
 
     .bar-container {
-      width: 60px;
-      height: 150px;
-      background: rgba(255, 255, 255, 0.1);
+      width: 70px;
+      height: 140px;
+      background: #f0f0f0;
       border-radius: 4px;
       display: flex;
-      gap: 4px;
-      padding: 4px;
+      gap: 3px;
+      padding: 3px;
       order: 2;
     }
 
@@ -293,6 +327,13 @@
       flex: 1;
       border-radius: 2px;
       transition: all 0.3s;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      color: #fff;
+      font-size: 0.75em;
+      font-weight: 700;
+      padding-bottom: 4px;
     }
 
     .bar-1 {
@@ -304,23 +345,16 @@
     }
 
     .bar:hover {
-      filter: brightness(1.2);
-    }
-
-    .bar-count {
-      font-size: 0.85em;
-      font-weight: bold;
-      order: 1;
-      color: #fff;
+      filter: brightness(0.9);
     }
 
     /* Heatmap Section */
     .heatmap-section {
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid #ffd709;
+      background: #fff;
+      border: 1px solid #eee;
       padding: 30px;
       border-radius: 8px;
-      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     .heatmap-grid {
@@ -331,12 +365,10 @@
     }
 
     .heatmap-column h4 {
-      margin-bottom: 15px;
-      color: #ff89ab;
-    }
-
-    .heatmap-column:nth-child(2) h4 {
-      color: #ffd709;
+      margin-bottom: 20px;
+      color: #333;
+      font-weight: 600;
+      font-size: 0.95em;
     }
 
     .weekdays {
@@ -352,8 +384,8 @@
       align-items: center;
       justify-content: center;
       border-radius: 4px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #f8f9fa;
+      border: 1px solid #eee;
       transition: all 0.3s;
       cursor: default;
     }
@@ -361,44 +393,55 @@
     .day-label {
       font-size: 0.7em;
       color: #999;
-      margin-top: 5px;
+      margin-top: 4px;
+      font-weight: 600;
     }
 
     .day-count {
-      font-size: 1.2em;
-      font-weight: bold;
+      font-size: 1.3em;
+      font-weight: 700;
+      color: #333;
     }
 
     .day-cell:hover {
       border-color: #ff89ab;
-      box-shadow: 0 0 15px rgba(255, 137, 171, 0.3);
+      box-shadow: 0 2px 8px rgba(255, 137, 171, 0.2);
     }
 
     .error {
-      color: #ff6e84;
+      color: #d32f2f;
       padding: 15px;
-      background: rgba(255, 110, 132, 0.1);
+      background: #ffebee;
       border-radius: 4px;
-      border: 1px solid #ff6e84;
+      border: 1px solid #ef5350;
+      margin-top: 10px;
+    }
+
+    .success {
+      color: #388e3c;
       margin-top: 10px;
     }
 
     @media (max-width: 768px) {
+      .input-wrapper {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
       .podcast-cards, .episodes-grid, .heatmap-grid {
         grid-template-columns: 1fr;
       }
 
       .logo {
-        max-width: 300px;
+        max-width: 250px;
       }
 
-      .btn-insert-coin {
-        padding: 15px 40px;
-        font-size: 18px;
+      .versus-icon {
+        font-size: 80px;
       }
 
-      .timeline-container {
-        height: 150px;
+      .versus-text {
+        font-size: 24px;
       }
     }
   </style>
@@ -420,7 +463,7 @@
             font-weight: 900;
             font-family: Arial Black, sans-serif;
             fill: url(#grad1);
-            text-shadow: 2px 2px 0 #000, 4px 4px 0 rgba(0,0,0,0.3);
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
             letter-spacing: 2px;
           }
           .turbo-text {
@@ -434,19 +477,34 @@
     </div>
 
     <!-- Input Section -->
-    <div class="input-section">
-      <div class="input-box">
-        <input type="text" id="rss-1" placeholder="Podcast 1 RSS Feed URL...">
+    <div class="input-wrapper">
+      <div class="input-column">
+        <div class="input-label">🎮 Player One</div>
+        <div class="input-box">
+          <input type="text" id="rss-1" placeholder="Paste RSS feed URL...">
+        </div>
       </div>
-      <div class="input-box">
-        <input type="text" id="rss-2" placeholder="Podcast 2 RSS Feed URL...">
+      <div class="input-column">
+        <div class="input-label">🎮 Player Two</div>
+        <div class="input-box">
+          <input type="text" id="rss-2" placeholder="Paste RSS feed URL...">
+        </div>
       </div>
+    </div>
+
+    <!-- Versus Section -->
+    <div class="versus-section">
+      <div style="width: 100%; height: 2px; background: #ddd;"></div>
+      <div class="versus-icon">⚡</div>
+      <div class="versus-text">Versus</div>
+      <div class="versus-icon">⚡</div>
+      <div style="width: 100%; height: 2px; background: #ddd;"></div>
     </div>
 
     <!-- Insert Coin Button -->
     <div class="btn-container">
       <button class="btn-insert-coin" onclick="loadBoth()">INSERT COIN</button>
-      <div id="error-msg" style="margin-top: 20px;"></div>
+      <div id="error-msg" style="margin-top: 15px;"></div>
     </div>
 
     <!-- Results Section -->
@@ -458,16 +516,6 @@
       <div class="episodes-today" id="episodes-today-section" style="display: none;">
         <div class="section-title">📻 Episodes Released Today</div>
         <div class="episodes-grid" id="episodes-grid"></div>
-        <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-          <div style="text-align: center;">
-            <div style="color: #ccc; margin-bottom: 10px;">Average Duration (Today)</div>
-            <div class="duration-value" id="avg-duration-1">-</div>
-          </div>
-          <div style="text-align: center;">
-            <div style="color: #ccc; margin-bottom: 10px;">Average Duration (Today)</div>
-            <div class="duration-value" id="avg-duration-2" style="color: #ffd709;">-</div>
-          </div>
-        </div>
       </div>
 
       <!-- Timeline -->
