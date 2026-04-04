@@ -233,70 +233,93 @@
     .episodes-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 60px;
+      gap: 80px;
       margin-bottom: 20px;
     }
 
     .episodes-list {
       text-align: left;
+      display: flex;
+      flex-direction: column;
+      min-height: 450px;
     }
 
     .episodes-list h4 {
-      font-size: 1em;
+      font-size: 1.08em;
       color: #333;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
       font-weight: 700;
-      padding-bottom: 12px;
-      border-bottom: 2px solid #f0f0f0;
+      padding-bottom: 15px;
+      border-bottom: 3px solid #f0f0f0;
     }
 
     .episodes-list:nth-child(1) h4 {
       color: #ff89ab;
+      border-bottom-color: #ff89ab;
     }
 
     .episodes-list:nth-child(2) h4 {
       color: #ffd709;
+      border-bottom-color: #ffd709;
     }
 
     .episode-item {
       background: #f8f9fa;
-      padding: 14px;
-      margin-bottom: 12px;
-      border-left: 4px solid #ff89ab;
-      border-radius: 4px;
-      font-size: 0.95em;
-      line-height: 1.6;
+      padding: 16px;
+      margin-bottom: 14px;
+      border-left: 5px solid #ff89ab;
+      border-radius: 6px;
+      font-size: 0.98em;
+      line-height: 1.7;
       color: #333;
+      flex-shrink: 0;
     }
 
     .episodes-list:nth-child(2) .episode-item {
       border-left-color: #ffd709;
+      color: #999;
+      font-style: italic;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
     }
 
     .duration-box {
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 4px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+      padding: 28px;
+      border-radius: 6px;
       text-align: center;
-      margin-top: 15px;
+      margin-top: auto;
+      border: 1px solid #eee;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     }
 
     .duration-label {
-      font-size: 0.85em;
-      color: #666;
-      margin-bottom: 8px;
+      font-size: 0.8em;
+      color: #999;
+      margin-bottom: 12px;
       text-transform: uppercase;
-      font-weight: 600;
+      font-weight: 700;
+      letter-spacing: 1px;
     }
 
     .duration-value {
-      font-size: 2em;
-      font-weight: 700;
+      font-size: 2.8em;
+      font-weight: 900;
       color: #ff89ab;
     }
 
     .episodes-list:nth-child(2) .duration-value {
       color: #ffd709;
+    }
+
+    .episodes-list:nth-child(2) .duration-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
     }
 
     /* Timeline Section */
