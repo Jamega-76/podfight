@@ -324,10 +324,6 @@ function startFight() {
   const modal = document.getElementById('fightModal');
   modal.classList.add('show');
   runFightAnimation();
-
-  setTimeout(() => {
-    modal.classList.remove('show');
-  }, 8000);
 }
 
 function getTodayStats(playerNum) {
@@ -402,60 +398,60 @@ function runFightAnimation() {
     '🌟 SPECIAL MOVE!',
     '⚙️ COMBO HIT!',
     '🎯 DIRECT HIT!',
-    '💫 ULTIMATE ATTACK!'
+    '💫 ULTIMATE ATTACK!',
+    '🌪️ TORNADO KICK!',
+    '⭐ MEGA BLAST!'
   ];
 
-  let html = '';
-  let delay = 0;
+  // ÉTAPE 1 (0-2s)
+  setTimeout(() => {
+    let html = `<div class="round-title">⚔️ ÉTAPE 1</div>`;
+    for (let i = 0; i < 2; i++) {
+      const action = actions[Math.floor(Math.random() * actions.length)];
+      html += `<div class="fight-action" style="animation-delay: ${i * 0.4}s;">${action}</div>`;
+    }
+    content.innerHTML = html;
+  }, 0);
 
-  // ROUND 1
-  html += `<div class="round-title" style="animation-delay: ${delay}s;">ROUND 1</div>`;
-  delay += 0.5;
+  // ÉTAPE 2 (2-4s)
+  setTimeout(() => {
+    let html = `<div class="round-title">⚔️ ÉTAPE 2</div>`;
+    for (let i = 0; i < 2; i++) {
+      const action = actions[Math.floor(Math.random() * actions.length)];
+      html += `<div class="fight-action" style="animation-delay: ${i * 0.4}s;">${action}</div>`;
+    }
+    content.innerHTML = html;
+  }, 2000);
 
-  for (let i = 0; i < 2; i++) {
-    const action = actions[Math.floor(Math.random() * actions.length)];
-    html += `<div class="fight-action" style="animation-delay: ${delay}s;">${action}</div>`;
-    delay += 0.6;
-  }
+  // RÉSULTAT (4-8s+)
+  setTimeout(() => {
+    const winnerPodcast = podcasts[winner];
+    const winnerStats = winner === 1 ? stats1 : stats2;
+    const loserStats = winner === 1 ? stats2 : stats1;
 
-  // ROUND 2
-  html += `<div class="round-title" style="animation-delay: ${delay}s;">ROUND 2</div>`;
-  delay += 0.5;
+    let explanation = '';
+    if (winnerStats.episodeCount > loserStats.episodeCount) {
+      explanation += `<strong>${podcasts[winner].title}</strong> released <strong>${winnerStats.episodeCount}</strong> episode${winnerStats.episodeCount > 1 ? 's' : ''} today vs ${loserStats.episodeCount}. `;
+    }
+    if (winnerStats.totalMinutes > loserStats.totalMinutes) {
+      explanation += `<strong>${winnerStats.totalMinutes}</strong> minutes of content vs ${loserStats.totalMinutes}. `;
+    }
+    if (winnerStats.avgDuration > loserStats.avgDuration) {
+      explanation += `Average duration: <strong>${winnerStats.avgDuration}m</strong> vs ${loserStats.avgDuration}m!`;
+    }
 
-  for (let i = 0; i < 2; i++) {
-    const action = actions[Math.floor(Math.random() * actions.length)];
-    html += `<div class="fight-action" style="animation-delay: ${delay}s;">${action}</div>`;
-    delay += 0.6;
-  }
-
-  // WINNER
-  const winnerPodcast = podcasts[winner];
-  const winnerStats = winner === 1 ? stats1 : stats2;
-  const loserStats = winner === 1 ? stats2 : stats1;
-
-  let explanation = '';
-  if (winnerStats.episodeCount > loserStats.episodeCount) {
-    explanation += `<strong>${podcasts[winner].title}</strong> released <strong>${winnerStats.episodeCount}</strong> episode${winnerStats.episodeCount > 1 ? 's' : ''} today vs ${loserStats.episodeCount} for its opponent. `;
-  }
-  if (winnerStats.totalMinutes > loserStats.totalMinutes) {
-    explanation += `With <strong>${winnerStats.totalMinutes}</strong> minutes of content, it dominated the airwaves. `;
-  }
-  if (winnerStats.avgDuration > loserStats.avgDuration) {
-    explanation += `Average episode duration of <strong>${winnerStats.avgDuration}m</strong> shows quality content!`;
-  }
-
-  html += `
-    <div class="winner-section" style="animation-delay: ${delay}s;">
-      <div class="round-title">🏆 WINNER 🏆</div>
-      <div class="winner-image">
-        ${winnerPodcast.image ? `<img src="${winnerPodcast.image}" alt="${winnerPodcast.title}">` : '<div style="background: #f0f0f0; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">📻</div>'}
+    let html = `
+      <div class="winner-section" style="animation-delay: 0.5s;">
+        <div class="round-title">🏆 WINNER 🏆</div>
+        <div class="winner-image">
+          ${winnerPodcast.image ? `<img src="${winnerPodcast.image}" alt="${winnerPodcast.title}">` : '<div style="background: #f0f0f0; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 80px;">📻</div>'}
+        </div>
+        <div class="winner-name">${winnerPodcast.title}</div>
+        <div class="winner-title">CHAMPION!</div>
+        <div class="winner-explanation">${explanation}</div>
+        <button class="close-fight" onclick="document.getElementById('fightModal').classList.remove('show');">CLOSE</button>
       </div>
-      <div class="winner-name">${winnerPodcast.title}</div>
-      <div class="winner-title">CHAMPION!</div>
-      <div class="winner-explanation">${explanation}</div>
-      <button class="close-fight" onclick="document.getElementById('fightModal').classList.remove('show');">CLOSE</button>
-    </div>
-  `;
-
-  content.innerHTML = html;
+    `;
+    content.innerHTML = html;
+  }, 4000);
 }
