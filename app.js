@@ -193,11 +193,13 @@ function renderTimeline() {
   const section = document.getElementById('timeline-section');
   const counts1 = [];
   const counts2 = [];
+  const dates = [];
 
   for (let i = 6; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
     d.setHours(0, 0, 0, 0);
+    dates.push(d);
 
     const c1 = podcasts[1].episodes.filter(ep => {
       const ed = new Date(ep.pubDate);
@@ -227,21 +229,28 @@ function renderTimeline() {
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   for (let i = 0; i < 7; i++) {
-    const d = new Date();
-    d.setDate(d.getDate() - 6 + i);
+    const d = dates[i];
     const dayName = days[d.getDay()];
+    const dateStr = (d.getMonth() + 1).toString().padStart(2, '0') + '/' + d.getDate().toString().padStart(2, '0');
     const c1 = counts1[i];
     const c2 = counts2[i];
-    const h1 = (c1 / maxCount) * 140;
-    const h2 = (c2 / maxCount) * 140;
+    const h1 = Math.max((c1 / maxCount) * 140, c1 > 0 ? 20 : 0);
+    const h2 = Math.max((c2 / maxCount) * 140, c2 > 0 ? 20 : 0);
 
     html += `
       <div class="timeline-bar">
         <div class="bar-container">
-          <div class="bar bar-1" style="height: ${h1}px;">${c1 > 0 ? c1 : ''}</div>
-          <div class="bar bar-2" style="height: ${h2}px;">${c2 > 0 ? c2 : ''}</div>
+          <div class="bar bar-1" style="height: ${h1}px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px;">
+            <span style="color: white; font-weight: 700; font-size: 0.9em;">${c1 > 0 ? c1 : ''}</span>
+          </div>
+          <div class="bar bar-2" style="height: ${h2}px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px;">
+            <span style="color: white; font-weight: 700; font-size: 0.9em;">${c2 > 0 ? c2 : ''}</span>
+          </div>
         </div>
-        <div class="bar-label">${dayName}</div>
+        <div class="bar-label" style="margin-top: 8px;">
+          <div style="font-weight: 600; color: #333; font-size: 0.9em;">${dayName}</div>
+          <div style="color: #999; font-size: 0.8em;">${dateStr}</div>
+        </div>
       </div>
     `;
   }
