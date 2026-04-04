@@ -160,27 +160,27 @@ function renderEpisodesToday() {
 
   // Player One
   html += `<div class="episodes-list">`;
-  html += `<h4>🎮 Player One (${todayEps1.length} ep${todayEps1.length !== 1 ? 's' : ''})</h4>`;
+  html += `<h4>🎮 PLAYER ONE — ${todayEps1.length} Episode${todayEps1.length !== 1 ? 's' : ''}</h4>`;
   if (todayEps1.length > 0) {
     todayEps1.forEach(ep => {
-      html += `<div class="episode-item">${ep.title}</div>`;
+      html += `<div class="episode-item">📌 ${ep.title}</div>`;
     });
-    html += `<div class="duration-box" style="margin-top: 15px;"><div class="duration-label">Avg Duration</div><div class="duration-value">${avgDur1}m</div></div>`;
+    html += `<div class="duration-box"><div class="duration-label">Average Duration</div><div class="duration-value">${avgDur1}m</div></div>`;
   } else {
-    html += `<div class="episode-item" style="color: #999;">No episodes today</div>`;
+    html += `<div class="episode-item" style="color: #999; font-style: italic;">No episodes released today</div>`;
   }
   html += `</div>`;
 
   // Player Two
   html += `<div class="episodes-list">`;
-  html += `<h4>🎮 Player Two (${todayEps2.length} ep${todayEps2.length !== 1 ? 's' : ''})</h4>`;
+  html += `<h4>🎮 PLAYER TWO — ${todayEps2.length} Episode${todayEps2.length !== 1 ? 's' : ''}</h4>`;
   if (todayEps2.length > 0) {
     todayEps2.forEach(ep => {
-      html += `<div class="episode-item">${ep.title}</div>`;
+      html += `<div class="episode-item">📌 ${ep.title}</div>`;
     });
-    html += `<div class="duration-box" style="margin-top: 15px;"><div class="duration-label">Avg Duration</div><div class="duration-value" style="color: #ffd709;">${avgDur2}m</div></div>`;
+    html += `<div class="duration-box"><div class="duration-label">Average Duration</div><div class="duration-value" style="color: #ffd709;">${avgDur2}m</div></div>`;
   } else {
-    html += `<div class="episode-item" style="color: #999;">No episodes today</div>`;
+    html += `<div class="episode-item" style="color: #999; font-style: italic;">No episodes released today</div>`;
   }
   html += `</div>`;
 

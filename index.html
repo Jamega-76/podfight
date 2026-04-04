@@ -215,7 +215,7 @@
     .episodes-today {
       background: #fff;
       border: 1px solid #eee;
-      padding: 30px;
+      padding: 40px;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       margin-bottom: 60px;
@@ -224,7 +224,7 @@
     .section-title {
       font-size: 1.2em;
       font-weight: 700;
-      margin-bottom: 25px;
+      margin-bottom: 30px;
       color: #333;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -233,7 +233,7 @@
     .episodes-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 40px;
+      gap: 50px;
     }
 
     .episodes-list {
@@ -241,20 +241,30 @@
     }
 
     .episodes-list h4 {
-      font-size: 0.95em;
-      color: #666;
-      margin-bottom: 15px;
-      font-weight: 600;
+      font-size: 1em;
+      color: #333;
+      margin-bottom: 20px;
+      font-weight: 700;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .episodes-list:nth-child(1) h4 {
+      color: #ff89ab;
+    }
+
+    .episodes-list:nth-child(2) h4 {
+      color: #ffd709;
     }
 
     .episode-item {
       background: #f8f9fa;
-      padding: 12px;
-      margin-bottom: 10px;
-      border-left: 3px solid #ff89ab;
+      padding: 14px;
+      margin-bottom: 12px;
+      border-left: 4px solid #ff89ab;
       border-radius: 4px;
-      font-size: 0.9em;
-      line-height: 1.5;
+      font-size: 0.95em;
+      line-height: 1.6;
       color: #333;
     }
 
@@ -267,16 +277,19 @@
       padding: 20px;
       border-radius: 4px;
       text-align: center;
+      margin-top: 15px;
     }
 
     .duration-label {
-      font-size: 0.9em;
+      font-size: 0.85em;
       color: #666;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      font-weight: 600;
     }
 
     .duration-value {
-      font-size: 1.8em;
+      font-size: 2em;
       font-weight: 700;
       color: #ff89ab;
     }
@@ -311,8 +324,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
-      min-width: 80px;
+      gap: 12px;
+      min-width: 90px;
       flex-shrink: 0;
     }
 
@@ -320,7 +333,8 @@
       font-size: 0.85em;
       color: #666;
       text-align: center;
-      min-width: 80px;
+      min-width: 90px;
+      order: 3;
     }
 
     .bar-container {
@@ -494,14 +508,14 @@
 
     <!-- Results Section -->
     <div class="results-section" id="results">
-      <!-- Podcast Cards -->
-      <div class="podcast-cards" id="podcast-cards"></div>
-
       <!-- Episodes Today -->
       <div class="episodes-today" id="episodes-today-section" style="display: none;">
         <div class="section-title">📻 Episodes Released Today</div>
         <div class="episodes-grid" id="episodes-grid"></div>
       </div>
+
+      <!-- Podcast Cards -->
+      <div class="podcast-cards" id="podcast-cards"></div>
 
       <!-- Timeline -->
       <div class="timeline-section" id="timeline-section" style="display: none;">
