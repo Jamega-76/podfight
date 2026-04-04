@@ -63,6 +63,111 @@
       50% { opacity: 1; }
     }
 
+    /* Sprite Animations */
+    @keyframes laserShoot {
+      0% {
+        left: -20px;
+        opacity: 1;
+      }
+      100% {
+        left: 100%;
+        opacity: 0.3;
+      }
+    }
+
+    @keyframes laserShootReverse {
+      0% {
+        right: -20px;
+        opacity: 1;
+      }
+      100% {
+        right: 100%;
+        opacity: 0.3;
+      }
+    }
+
+    @keyframes spaceshipFly {
+      0% {
+        left: -50px;
+        opacity: 0.8;
+      }
+      100% {
+        left: 100%;
+        opacity: 0.3;
+      }
+    }
+
+    @keyframes spaceshipFlyReverse {
+      0% {
+        right: -50px;
+        opacity: 0.8;
+      }
+      100% {
+        right: 100%;
+        opacity: 0.3;
+      }
+    }
+
+    @keyframes explosionBurst {
+      0% {
+        opacity: 1;
+        transform: scale(0.5);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1.5);
+      }
+    }
+
+    .sprite {
+      position: fixed;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .laser {
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, #ff00ff 20%, #ffff00 50%, #ff00ff 80%, transparent 100%);
+      box-shadow: 0 0 10px #ff00ff, 0 0 5px #ffff00;
+    }
+
+    .laser-left {
+      animation: laserShoot 2s ease-in-out infinite;
+    }
+
+    .laser-right {
+      animation: laserShootReverse 2s ease-in-out infinite;
+    }
+
+    .spaceship {
+      width: 30px;
+      height: 30px;
+      opacity: 0.7;
+      filter: drop-shadow(0 0 8px #00ff88);
+    }
+
+    .spaceship-left {
+      animation: spaceshipFly 3.5s ease-in-out infinite;
+    }
+
+    .spaceship-right {
+      animation: spaceshipFlyReverse 3.5s ease-in-out infinite;
+    }
+
+    .explosion {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #ffff00, #ff8800);
+      box-shadow: 0 0 20px #ff8800, 0 0 40px #ff00ff;
+      animation: explosionBurst 1s ease-out forwards;
+      filter: drop-shadow(0 0 15px #ffff00);
+    }
+
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -150,10 +255,30 @@
       }
     }
 
+    @keyframes logoBlink {
+      0%, 100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 20px #ff00ff) drop-shadow(0 0 10px #00ffff) brightness(1);
+      }
+      25% {
+        opacity: 0.8;
+        filter: drop-shadow(0 0 35px #ff00ff) drop-shadow(0 0 20px #ffff00) brightness(1.1);
+      }
+      50% {
+        opacity: 0.6;
+        filter: drop-shadow(0 0 50px #ff00ff) drop-shadow(0 0 30px #00ffff) drop-shadow(0 0 15px #ffff00) brightness(1.2);
+      }
+      75% {
+        opacity: 0.8;
+        filter: drop-shadow(0 0 35px #ff00ff) drop-shadow(0 0 20px #ffff00) brightness(1.1);
+      }
+    }
+
     .logo {
       max-width: 420px;
       height: auto;
       margin: 0 auto;
+      animation: logoBlink 2s infinite ease-in-out;
       filter: drop-shadow(0 0 20px #ff00ff) drop-shadow(0 0 10px #00ffff);
     }
 
@@ -172,25 +297,83 @@
     }
 
     .nav-button {
-      padding: 8px 16px;
-      background: linear-gradient(135deg, #ff00ff 0%, #ff0088 100%);
-      color: #fff;
-      border: 2px solid #ff00ff;
-      border-radius: 4px;
+      padding: 10px 18px;
+      color: #000;
+      border: 3px solid;
+      border-radius: 2px;
       font-family: 'Orbitron', sans-serif;
       font-size: 11px;
       font-weight: 700;
       cursor: pointer;
       text-transform: uppercase;
-      transition: all 0.3s;
-      box-shadow: 0 0 10px #ff00ff;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       letter-spacing: 1px;
+      font-weight: 900;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
 
     .nav-button:hover {
-      background: linear-gradient(135deg, #ff0088 0%, #ff00ff 100%);
-      box-shadow: 0 0 20px #ff00ff, 0 0 30px #00ffff;
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+    }
+
+    /* Accueil - Blue */
+    .nav-button:nth-child(1) {
+      background: linear-gradient(135deg, #0066ff 0%, #0088ff 100%);
+      border-color: #0044cc;
+      box-shadow: 0 0 20px #0066ff, 0 0 10px #00ffff, inset 0 -3px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    .nav-button:nth-child(1):hover {
+      box-shadow: 0 0 35px #0066ff, 0 0 20px #00ffff, 0 8px 20px rgba(0, 102, 255, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    /* Règles - Pink/Rose */
+    .nav-button:nth-child(2) {
+      background: linear-gradient(135deg, #ff00ff 0%, #ff3388 100%);
+      border-color: #dd00bb;
+      box-shadow: 0 0 20px #ff00ff, 0 0 10px #ff66cc, inset 0 -3px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    .nav-button:nth-child(2):hover {
+      box-shadow: 0 0 35px #ff00ff, 0 0 20px #ff66cc, 0 8px 20px rgba(255, 0, 255, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    /* Classement - Green */
+    .nav-button:nth-child(3) {
+      background: linear-gradient(135deg, #00ff88 0%, #00dd77 100%);
+      border-color: #00bb55;
+      box-shadow: 0 0 20px #00ff88, 0 0 10px #00ffaa, inset 0 -3px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    .nav-button:nth-child(3):hover {
+      box-shadow: 0 0 35px #00ff88, 0 0 20px #00ffaa, 0 8px 20px rgba(0, 255, 136, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    /* Boutique - Orange */
+    .nav-button:nth-child(4) {
+      background: linear-gradient(135deg, #ffaa00 0%, #ff8800 100%);
+      border-color: #dd7700;
+      box-shadow: 0 0 20px #ffaa00, 0 0 10px #ffcc33, inset 0 -3px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    .nav-button:nth-child(4):hover {
+      box-shadow: 0 0 35px #ffaa00, 0 0 20px #ffcc33, 0 8px 20px rgba(255, 170, 0, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    /* Communauté - Violet */
+    .nav-button:nth-child(5) {
+      background: linear-gradient(135deg, #aa00ff 0%, #8800dd 100%);
+      border-color: #6600bb;
+      box-shadow: 0 0 20px #aa00ff, 0 0 10px #cc33ff, inset 0 -3px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    .nav-button:nth-child(5):hover {
+      box-shadow: 0 0 35px #aa00ff, 0 0 20px #cc33ff, 0 8px 20px rgba(170, 0, 255, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    /* Historique - Rainbow/Multicolor */
+    .nav-button:nth-child(6) {
+      background: linear-gradient(90deg, #ff00ff 0%, #ffaa00 50%, #00ff88 100%);
+      border-color: #ff00ff;
+      box-shadow: 0 0 20px #ff00ff, 0 0 10px #ffaa00, inset 0 -3px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    .nav-button:nth-child(6):hover {
+      box-shadow: 0 0 35px #ff00ff, 0 0 20px #ffaa00, 0 0 15px #00ff88, 0 8px 20px rgba(255, 0, 255, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
     }
 
     /* Input Section - Arena Layout */
@@ -321,6 +504,48 @@
       box-shadow: 0 0 25px #ffff00, 0 4px 15px rgba(255, 170, 0, 0.4);
     }
 
+    /* START Button - Green Blinking */
+    @keyframes startBlink {
+      0%, 10%, 20%, 30%, 100% {
+        opacity: 1;
+        background: linear-gradient(135deg, #00ff88 0%, #00dd77 100%);
+        box-shadow: 0 0 30px #00ff88, 0 0 15px #00ffaa;
+        text-shadow: 0 0 15px #000, 0 0 10px #00ff88;
+      }
+      5%, 15%, 25%, 35% {
+        opacity: 0.3;
+        background: linear-gradient(135deg, #008844 0%, #006633 100%);
+        box-shadow: 0 0 10px #00ff88, 0 0 5px #00aa66;
+        text-shadow: 0 0 5px #000;
+      }
+    }
+
+    .btn-start {
+      padding: 18px 48px;
+      font-size: 18px;
+      font-weight: 900;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #00ff88 0%, #00dd77 100%);
+      border: 4px solid #008844;
+      color: #000;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s;
+      box-shadow: 0 0 30px #00ff88, 0 0 15px #00ffaa, inset 0 -4px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      letter-spacing: 2px;
+      font-family: 'Press Start 2P', cursive;
+      animation: startBlink 1.2s infinite;
+    }
+
+    .btn-start:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 50px #00ff88, 0 0 25px #00ffaa, 0 0 15px #ffff00, 0 10px 20px rgba(0, 255, 136, 0.4), inset 0 -4px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-start:active {
+      transform: translateY(-1px);
+    }
+
     /* Results Section */
     .results-section {
       display: none;
@@ -432,14 +657,29 @@
       width: 100%;
     }
 
+    @keyframes titleGlow {
+      0%, 100% {
+        color: #ffff00;
+        text-shadow: 0 0 10px #ffff00, 0 0 5px #ff00ff;
+        transform: scale(1);
+      }
+      50% {
+        color: #ffff00;
+        text-shadow: 0 0 25px #ffff00, 0 0 15px #ff00ff, 0 0 8px #00ffff;
+        transform: scale(1.05);
+      }
+    }
+
     .section-title {
-      font-size: 1em;
+      font-size: 1.15em;
       font-weight: 700;
       margin-bottom: 28px;
       color: #ffff00;
       text-transform: uppercase;
-      letter-spacing: 1.2px;
-      text-shadow: 0 0 10px #ffff00;
+      letter-spacing: 1.5px;
+      animation: titleGlow 2.5s ease-in-out infinite;
+      display: inline-block;
+      width: 100%;
     }
 
     .episodes-grid {
@@ -967,23 +1207,36 @@
     }
 
     .battle-card {
-      background: linear-gradient(135deg, rgba(0, 30, 60, 0.4) 0%, rgba(100, 0, 150, 0.3) 100%);
-      border: 2px solid #00ffff;
-      border-radius: 4px;
-      padding: 16px;
+      background: linear-gradient(135deg, rgba(0, 30, 60, 0.6) 0%, rgba(100, 0, 150, 0.4) 100%);
+      border: 3px solid #00ffff;
+      border-bottom: 3px solid #ff00ff;
+      border-radius: 2px;
+      padding: 20px;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+      gap: 14px;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(0, 255, 255, 0.1), 0 3px 0 rgba(255, 0, 255, 0.2);
+      position: relative;
+    }
+
+    .battle-card::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, #ff00ff 50%, transparent 100%);
     }
 
     .battle-card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-5px);
       border-color: #ff00ff;
-      box-shadow: 0 0 20px #ff00ff, 0 0 10px #00ffff;
+      border-bottom-color: #ffff00;
+      box-shadow: 0 0 30px #ff00ff, 0 0 15px #00ffff, 0 0 10px #ffff00, inset 0 0 10px rgba(255, 0, 255, 0.2), 0 5px 0 rgba(255, 0, 255, 0.3);
     }
 
     .battle-images {
@@ -1023,7 +1276,9 @@
       text-align: center;
       font-size: 0.85em;
       line-height: 1.4;
-      color: #333;
+      color: #00ffff;
+      font-weight: 600;
+      text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
     }
 
     .battle-names-item {
@@ -1338,6 +1593,7 @@
     <!-- Insert Coin Button -->
     <div class="btn-container">
       <button class="btn-insert-coin" onclick="loadBoth()">🪙 INSÉRER PIÈCE</button>
+      <button class="btn-start" id="startBtn" style="display: none; margin-left: 20px;" onclick="startFight()">▶ START</button>
       <div id="error-msg" style="margin-top: 15px;"></div>
     </div>
 
@@ -1379,5 +1635,35 @@
   </div>
 
   <script src="app.js"></script>
+
+  <!-- Decorative Sprites -->
+  <!-- Lasers -->
+  <div class="sprite laser laser-left" style="width: 200px; top: 15%; animation-delay: 0s;"></div>
+  <div class="sprite laser laser-right" style="width: 180px; top: 30%; animation-delay: 0.8s;"></div>
+  <div class="sprite laser laser-left" style="width: 220px; top: 50%; animation-delay: 1.5s;"></div>
+  <div class="sprite laser laser-right" style="width: 190px; top: 70%; animation-delay: 0.3s;"></div>
+  <div class="sprite laser laser-left" style="width: 210px; top: 85%; animation-delay: 1.2s;"></div>
+
+  <!-- Spaceships -->
+  <div class="sprite spaceship spaceship-left" style="top: 25%; animation-delay: 0s;">
+    <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="15,5 25,25 15,20 5,25" fill="#00ff88" stroke="#00ffaa" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="sprite spaceship spaceship-right" style="top: 45%; animation-delay: 1s;">
+    <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="15,5 25,25 15,20 5,25" fill="#00ff88" stroke="#00ffaa" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="sprite spaceship spaceship-left" style="top: 65%; animation-delay: 2s;">
+    <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="15,5 25,25 15,20 5,25" fill="#00ff88" stroke="#00ffaa" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <!-- Explosions (static bursts for now, can add more with JS) -->
+  <div class="sprite explosion" style="top: 20%; left: 30%; animation-delay: 2.5s;"></div>
+  <div class="sprite explosion" style="top: 60%; right: 20%; animation-delay: 3.2s;"></div>
+
 </body>
 </html>

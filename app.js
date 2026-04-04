@@ -46,6 +46,9 @@ async function loadBoth() {
     // Check if button should be shown
     checkShowKonamiButton();
 
+    // Show START button when podcasts are loaded
+    document.getElementById('startBtn').style.display = 'inline-block';
+
     renderPodcastCards();
     renderEpisodesToday();
     renderTimeline();
