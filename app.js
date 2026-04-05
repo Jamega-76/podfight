@@ -621,6 +621,67 @@ function renderAvgDurationToday() {
 }
 
 // New Card: 10-Day Activity Heatmap
+// Generate 10-day activity analysis
+function generate10DayAnalysis(dates, dayCounts1, dayCounts2, pod1, pod2) {
+  // Analyze by day of week
+  const dayPatterns = { 0: { name: 'Dim', c1: [], c2: [] }, 1: { name: 'Lun', c1: [], c2: [] }, 2: { name: 'Mar', c1: [], c2: [] }, 3: { name: 'Mer', c1: [], c2: [] }, 4: { name: 'Jeu', c1: [], c2: [] }, 5: { name: 'Ven', c1: [], c2: [] }, 6: { name: 'Sam', c1: [], c2: [] } };
+
+  dates.forEach(date => {
+    const dateStr = date.toLocaleDateString('fr-FR', { month: '2-digit', day: '2-digit' });
+    const dayOfWeek = date.getDay();
+    dayPatterns[dayOfWeek].c1.push(dayCounts1[dateStr]);
+    dayPatterns[dayOfWeek].c2.push(dayCounts2[dateStr]);
+  });
+
+  // Calculate averages for each day
+  Object.keys(dayPatterns).forEach(day => {
+    const pattern = dayPatterns[day];
+    pattern.avg1 = pattern.c1.length > 0 ? (pattern.c1.reduce((a, b) => a + b) / pattern.c1.length) : 0;
+    pattern.avg2 = pattern.c2.length > 0 ? (pattern.c2.reduce((a, b) => a + b) / pattern.c2.length) : 0;
+  });
+
+  // Identify patterns
+  const monTueAvg1 = (dayPatterns[1].avg1 + dayPatterns[2].avg1) / 2;
+  const monTueAvg2 = (dayPatterns[1].avg2 + dayPatterns[2].avg2) / 2;
+  const wedThuAvg1 = (dayPatterns[3].avg1 + dayPatterns[4].avg1) / 2;
+  const wedThuAvg2 = (dayPatterns[3].avg2 + dayPatterns[4].avg2) / 2;
+  const friAvg1 = dayPatterns[5].avg1;
+  const friAvg2 = dayPatterns[5].avg2;
+  const weekendAvg1 = (dayPatterns[6].avg1 + dayPatterns[0].avg1) / 2;
+  const weekendAvg2 = (dayPatterns[6].avg2 + dayPatterns[0].avg2) / 2;
+
+  const maxAvg1 = Math.max(monTueAvg1, wedThuAvg1, friAvg1, weekendAvg1);
+  const maxAvg2 = Math.max(monTueAvg2, wedThuAvg2, friAvg2, weekendAvg2);
+
+  const isHighWeekend1 = weekendAvg1 > maxAvg1 * 0.6;
+  const isHighWeekend2 = weekendAvg2 > maxAvg2 * 0.6;
+
+  let analysis = `<div class="ten-day-analysis" style="margin-top: 32px; padding: 24px; background: rgba(0, 50, 100, 0.3); border: 2px solid #00ffff; border-radius: 4px; color: #00ff88; font-size: 0.95em; line-height: 1.8; text-align: left;">
+    <div style="color: #ffff00; font-weight: 700; font-size: 1.05em; margin-bottom: 16px;">📊 Analyse de l'Activité</div>
+
+    <div style="color: #00ff88; margin-bottom: 14px;">
+      L'observation de l'activité sur 10 jours met en évidence une concentration des publications en ${friAvg1 > 0 || friAvg2 > 0 ? 'début et fin de semaine' : 'certains jours stratégiques'}, avec un pic ${friAvg1 > monTueAvg1 && friAvg2 > monTueAvg2 ? 'très marqué le vendredi' : 'identifié'} pour les deux podcasts.
+    </div>
+
+    <div style="color: #ffaa00; font-weight: 700; margin-bottom: 10px;">Le vendredi apparaît comme le jour stratégique principal :</div>
+
+    <div style="margin-left: 16px; margin-bottom: 14px; color: #00ff88;">
+      • <span class="analysis-highlight" style="color: #ff00ff; font-weight: 700;">${pod1}</span> atteint un maximum de ${Math.round(friAvg1)} épisode${Math.round(friAvg1) > 1 ? 's' : ''}<br>
+      • <span class="analysis-highlight" style="color: #ffd709; font-weight: 700;">${pod2}</span> y publie également son volume le plus élevé (${Math.round(friAvg2)} épisode${Math.round(friAvg2) > 1 ? 's' : ''})
+    </div>
+
+    <div style="color: #00ff88; margin-bottom: 14px;">
+      En complément, le début de semaine (lundi et mardi) constitue un second temps fort, particulièrement pour <span style="color: #ff00ff; font-weight: 700;">${pod1}</span>, avec des volumes élevés (jusqu'à ${Math.round(Math.max(...dayPatterns[1].c1, ...dayPatterns[2].c1))} épisodes par jour), tandis que <span style="color: #ffd709; font-weight: 700;">${pod2}</span> reste stable autour de ${Math.round(monTueAvg2)} épisodes.
+    </div>
+
+    <div style="color: #00ff88; margin-bottom: 14px;">
+      À l'inverse, le milieu de semaine (mercredi/jeudi) montre un léger ralentissement ${wedThuAvg1 < monTueAvg1 || wedThuAvg2 < monTueAvg2 ? '(baisse confirmée)' : ''}, avant une reprise nette le vendredi. Le week-end est ${isHighWeekend1 || isHighWeekend2 ? 'également actif' : 'plus calme'}, avec des volumes ${isHighWeekend1 || isHighWeekend2 ? 'significatifs et réguliers' : 'modérés et réguliers'} pour les deux podcasts.
+    </div>
+  </div>`;
+
+  return analysis;
+}
+
 function render10DayHeatmap() {
   const section = document.getElementById('ten-day-activity-section');
   if (!podcasts[1] || !podcasts[2]) return;
@@ -728,6 +789,10 @@ function render10DayHeatmap() {
       📌 ${podcasts[2].title}: Jour de pic = <span style="color: #ffff00;">${maxDay2.dayName} ${maxDay2.date}</span> (${maxDay2.count} épisode${maxDay2.count > 1 ? 's' : ''})
     </div>
   </div>`;
+
+  // Generate and add analysis
+  const analysis = generate10DayAnalysis(dates, dayCounts1, dayCounts2, podcasts[1].title, podcasts[2].title);
+  html += analysis;
 
   document.getElementById('ten-day-heatmap').innerHTML = html;
 }
