@@ -50,7 +50,6 @@ async function loadBoth() {
     document.getElementById('startBtn').style.display = 'inline-block';
 
     renderPodcastCards();
-    renderEpisodesToday();
     renderTimeline();
     renderHeatmap();
     renderEpisodeFullList();
@@ -271,66 +270,6 @@ function renderPodcastCards() {
   container.innerHTML = html;
 }
 
-function renderEpisodesToday() {
-  const section = document.getElementById('episodes-today-section');
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const todayEps1 = podcasts[1].episodes.filter(ep => {
-    const d = new Date(ep.pubDate);
-    d.setHours(0, 0, 0, 0);
-    return d.getTime() === today.getTime();
-  });
-
-  const todayEps2 = podcasts[2].episodes.filter(ep => {
-    const d = new Date(ep.pubDate);
-    d.setHours(0, 0, 0, 0);
-    return d.getTime() === today.getTime();
-  });
-
-  if (todayEps1.length === 0 && todayEps2.length === 0) {
-    section.style.display = 'none';
-    return;
-  }
-
-  section.style.display = 'block';
-
-  const avgDur1 = todayEps1.length > 0 ? Math.round(todayEps1.reduce((s, e) => s + e.duration, 0) / todayEps1.length / 60) : 0;
-  const avgDur2 = todayEps2.length > 0 ? Math.round(todayEps2.reduce((s, e) => s + e.duration, 0) / todayEps2.length / 60) : 0;
-
-  let html = '<div class="episodes-grid">';
-
-  // Joueur Un
-  html += `<div class="episodes-list">`;
-  html += `<h4>🎮 JOUEUR UN — ${todayEps1.length} Épisode${todayEps1.length !== 1 ? 's' : ''}</h4>`;
-  if (todayEps1.length > 0) {
-    todayEps1.forEach(ep => {
-      html += `<div class="episode-item">📌 ${ep.title}</div>`;
-    });
-    html += `<div class="duration-box"><div class="duration-label">Durée Moyenne</div><div class="duration-value">${avgDur1}m</div></div>`;
-  } else {
-    html += `<div class="episode-item" style="color: #999; font-style: italic;">Aucun épisode sorti aujourd'hui</div>`;
-  }
-  html += `</div>`;
-
-  // Joueur Deux
-  html += `<div class="episodes-list">`;
-  html += `<h4>🎮 JOUEUR DEUX — ${todayEps2.length} Épisode${todayEps2.length !== 1 ? 's' : ''}</h4>`;
-  if (todayEps2.length > 0) {
-    todayEps2.forEach(ep => {
-      html += `<div class="episode-item">📌 ${ep.title}</div>`;
-    });
-    html += `<div class="duration-box"><div class="duration-label">Durée Moyenne</div><div class="duration-value" style="color: #ffd709;">${avgDur2}m</div></div>`;
-  } else {
-    html += `<div class="episode-item" style="color: #999; font-style: italic;">Aucun épisode sorti aujourd'hui</div>`;
-  }
-  html += `</div>`;
-
-  html += '</div>';
-
-  document.getElementById('episodes-grid').innerHTML = html;
-}
-
 function renderTimeline() {
   const section = document.getElementById('timeline-section');
   const counts1 = [];
@@ -537,9 +476,9 @@ function runFightAnimation() {
     '⭐ MÉGA EXPLOSION!'
   ];
 
-  // ÉTAPE 1 (0-2s)
+  // ROUND 1 (0-2s)
   setTimeout(() => {
-    let html = `<div class="round-title">⚔️ ÉTAPE 1</div>`;
+    let html = `<div class="round-title">⚔️ ROUND 1</div>`;
     for (let i = 0; i < 2; i++) {
       const action = actions[Math.floor(Math.random() * actions.length)];
       html += `<div class="fight-action" style="animation-delay: ${i * 0.4}s;">${action}</div>`;
@@ -547,9 +486,9 @@ function runFightAnimation() {
     content.innerHTML = html;
   }, 0);
 
-  // ÉTAPE 2 (2-4s)
+  // ROUND 2 (2-4s)
   setTimeout(() => {
-    let html = `<div class="round-title">⚔️ ÉTAPE 2</div>`;
+    let html = `<div class="round-title">⚔️ ROUND 2</div>`;
     for (let i = 0; i < 2; i++) {
       const action = actions[Math.floor(Math.random() * actions.length)];
       html += `<div class="fight-action" style="animation-delay: ${i * 0.4}s;">${action}</div>`;
@@ -582,11 +521,29 @@ function runFightAnimation() {
         <div style="font-size: 4.5em; font-weight: 900; margin-bottom: 20px; color: #ffd709; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 20px rgba(255, 215, 9, 0.6);">${winnerPodcast.title}</div>
         <div style="font-size: 3.5em; color: #ff89ab; margin-bottom: 40px; font-weight: 700; letter-spacing: 2px; animation: pulse 1s infinite;">WIN!!!!</div>
         <div style="font-size: 1.2em; line-height: 2; color: #ccc; text-align: left; max-width: 700px; margin: 0 auto; padding: 30px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; border-left: 4px solid #ffd709;">${explanation}</div>
-        <button class="close-fight" onclick="document.getElementById('fightModal').classList.remove('show');" style="margin-top: 40px;">FERMER</button>
       </div>
     `;
     content.innerHTML = html;
   }, 4000);
+
+  // Analysis Summary (5-8s+)
+  setTimeout(() => {
+    const analysisHtml = renderAnalysisSummary(true);
+    const analysisSection = document.createElement('div');
+    analysisSection.style.marginTop = '40px';
+    analysisSection.style.paddingTop = '30px';
+    analysisSection.style.borderTop = '2px solid #ff00ff';
+    analysisSection.innerHTML = `<div style="text-align: center; margin-bottom: 20px; font-size: 1.3em; color: #00ffff; font-weight: bold; text-shadow: 0 0 10px #00ffff;">🎯 Analyse Comparative</div>${analysisHtml}`;
+    content.appendChild(analysisSection);
+
+    // Add close button at the end
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'close-fight';
+    closeBtn.textContent = 'FERMER';
+    closeBtn.style.marginTop = '40px';
+    closeBtn.onclick = () => document.getElementById('fightModal').classList.remove('show');
+    content.appendChild(closeBtn);
+  }, 5000);
 }
 
 // New Card: Full Episode List with Names
@@ -678,6 +635,7 @@ function render10DayHeatmap() {
   const section = document.getElementById('ten-day-activity-section');
   if (!podcasts[1] || !podcasts[2]) return;
 
+  const dates = [];
   const dayCounts1 = {};
   const dayCounts2 = {};
 
@@ -685,6 +643,8 @@ function render10DayHeatmap() {
   for (let i = 9; i >= 0; i--) {
     const date = new Date();
     date.setDate(date.getDate() - i);
+    date.setHours(0, 0, 0, 0);
+    dates.push(date);
     const dateStr = date.toLocaleDateString('fr-FR', { month: '2-digit', day: '2-digit' });
     dayCounts1[dateStr] = 0;
     dayCounts2[dateStr] = 0;
@@ -692,97 +652,158 @@ function render10DayHeatmap() {
 
   // Count episodes
   podcasts[1].episodes.forEach(ep => {
-    const epDate = new Date(ep.pubDate).toLocaleDateString('fr-FR', { month: '2-digit', day: '2-digit' });
-    if (dayCounts1[epDate] !== undefined) dayCounts1[epDate]++;
+    const epDate = new Date(ep.pubDate);
+    epDate.setHours(0, 0, 0, 0);
+    const dateStr = epDate.toLocaleDateString('fr-FR', { month: '2-digit', day: '2-digit' });
+    if (dayCounts1[dateStr] !== undefined) dayCounts1[dateStr]++;
   });
 
   podcasts[2].episodes.forEach(ep => {
-    const epDate = new Date(ep.pubDate).toLocaleDateString('fr-FR', { month: '2-digit', day: '2-digit' });
-    if (dayCounts2[epDate] !== undefined) dayCounts2[epDate]++;
+    const epDate = new Date(ep.pubDate);
+    epDate.setHours(0, 0, 0, 0);
+    const dateStr = epDate.toLocaleDateString('fr-FR', { month: '2-digit', day: '2-digit' });
+    if (dayCounts2[dateStr] !== undefined) dayCounts2[dateStr]++;
   });
 
-  const dates = Object.keys(dayCounts1);
-  const maxCount = Math.max(...dates.map(d => Math.max(dayCounts1[d], dayCounts2[d])));
+  const maxCount = Math.max(...dates.map(d => {
+    const dateStr = d.toLocaleDateString('fr-FR', { month: '2-digit', day: '2-digit' });
+    return Math.max(dayCounts1[dateStr], dayCounts2[dateStr]);
+  }));
 
-  let html = '<div class="ten-day-heatmap">';
+  if (maxCount === 0) {
+    section.style.display = 'none';
+    return;
+  }
 
-  // Podcast 1
-  html += '<div class="heatmap-10day-column">';
-  html += `<div class="heatmap-10day-title">${podcasts[1].title}</div>`;
-  html += '<div class="heatmap-10day-grid">';
+  section.style.display = 'block';
+
+  let html = '<div class="ten-day-heatmap-container">';
+
+  // Render 10 days horizontally
   dates.forEach(date => {
-    const count = dayCounts1[date];
-    const intensity = maxCount > 0 ? count / maxCount : 0;
-    const bgColor = `rgba(255, 0, 255, ${0.2 + intensity * 0.8})`;
-    const borderColor = intensity > 0.7 ? '#ff00ff' : '#00ffff';
-    html += `<div class="heatmap-10day-day" style="background: ${bgColor}; border-color: ${borderColor}; color: #00ff88;">
-               <div class="heatmap-10day-day-label">${date}</div>
-               <div class="heatmap-10day-day-count">${count}</div>
-             </div>`;
-  });
-  html += '</div></div>';
+    const dateStr = date.toLocaleDateString('fr-FR', { month: '2-digit', day: '2-digit' });
+    const c1 = dayCounts1[dateStr];
+    const c2 = dayCounts2[dateStr];
+    const intensity1 = maxCount > 0 ? c1 / maxCount : 0;
+    const intensity2 = maxCount > 0 ? c2 / maxCount : 0;
+    const bgColor1 = `rgba(255, 0, 255, ${0.2 + intensity1 * 0.8})`;
+    const bgColor2 = `rgba(255, 215, 9, ${0.2 + intensity2 * 0.8})`;
+    const borderColor1 = intensity1 > 0.7 ? '#ff00ff' : '#00ffff';
+    const borderColor2 = intensity2 > 0.7 ? '#ffff00' : '#00ffff';
 
-  // Podcast 2
-  html += '<div class="heatmap-10day-column">';
-  html += `<div class="heatmap-10day-title">${podcasts[2].title}</div>`;
-  html += '<div class="heatmap-10day-grid">';
-  dates.forEach(date => {
-    const count = dayCounts2[date];
-    const intensity = maxCount > 0 ? count / maxCount : 0;
-    const bgColor = `rgba(255, 215, 9, ${0.2 + intensity * 0.8})`;
-    const borderColor = intensity > 0.7 ? '#ffff00' : '#00ffff';
-    html += `<div class="heatmap-10day-day" style="background: ${bgColor}; border-color: ${borderColor}; color: #00ff88;">
-               <div class="heatmap-10day-day-label">${date}</div>
-               <div class="heatmap-10day-day-count">${count}</div>
-             </div>`;
+    const dayName = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'][date.getDay()];
+
+    html += `
+      <div class="ten-day-bar-group">
+        <div class="ten-day-bars">
+          <div class="ten-day-bar" style="background: ${bgColor1}; border-color: ${borderColor1};">
+            <span>${c1}</span>
+          </div>
+          <div class="ten-day-bar" style="background: ${bgColor2}; border-color: ${borderColor2};">
+            <span>${c2}</span>
+          </div>
+        </div>
+        <div class="ten-day-label">
+          <div style="font-weight: 600; color: #00ffff; font-size: 0.85em;">${dayName}</div>
+          <div style="color: #00ff88; font-size: 0.75em;">${dateStr}</div>
+        </div>
+      </div>
+    `;
   });
-  html += '</div></div>';
 
   html += '</div>';
   document.getElementById('ten-day-heatmap').innerHTML = html;
-  section.style.display = 'block';
 }
 
 // New Card: Analysis Summary
-function renderAnalysisSummary() {
-  const section = document.getElementById('analysis-summary-section');
-  if (!podcasts[1] || !podcasts[2]) return;
+function renderAnalysisSummary(intoModal = false) {
+  if (!podcasts[1] || !podcasts[2]) return '';
 
   const today = new Date().toDateString();
-  const eps1 = podcasts[1].episodes.filter(ep => new Date(ep.pubDate).toDateString() === today);
-  const eps2 = podcasts[2].episodes.filter(ep => new Date(ep.pubDate).toDateString() === today);
 
-  const totalDur1 = eps1.reduce((sum, ep) => sum + ep.duration, 0);
-  const totalDur2 = eps2.reduce((sum, ep) => sum + ep.duration, 0);
-  const avgDur1 = eps1.length > 0 ? Math.round(totalDur1 / eps1.length / 60) : 0;
-  const avgDur2 = eps2.length > 0 ? Math.round(totalDur2 / eps2.length / 60) : 0;
+  // Get data for today
+  const eps1Today = podcasts[1].episodes.filter(ep => new Date(ep.pubDate).toDateString() === today);
+  const eps2Today = podcasts[2].episodes.filter(ep => new Date(ep.pubDate).toDateString() === today);
 
-  let analysis = '';
+  // Get data for last 7 days
+  const last7Days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    d.setHours(0, 0, 0, 0);
+    last7Days.push(d);
+  }
 
-  // Comparison logic
-  if (eps1.length > eps2.length) {
-    analysis += `<span class="analysis-highlight">${podcasts[1].title}</span> publie plus régulièrement avec ${eps1.length} épisode${eps1.length > 1 ? 's' : ''} contre ${eps2.length} pour ${podcasts[2].title}. `;
-  } else if (eps2.length > eps1.length) {
-    analysis += `<span class="analysis-highlight">${podcasts[2].title}</span> publie plus régulièrement avec ${eps2.length} épisode${eps2.length > 1 ? 's' : ''} contre ${eps1.length} pour ${podcasts[1].title}. `;
-  } else if (eps1.length > 0) {
-    analysis += `Les deux podcasts ont publié <span class="analysis-highlight">${eps1.length} épisode${eps1.length > 1 ? 's' : ''}</span> aujourd'hui. `;
+  const eps1_7d = podcasts[1].episodes.filter(ep => {
+    const d = new Date(ep.pubDate);
+    d.setHours(0, 0, 0, 0);
+    return last7Days.some(date => date.getTime() === d.getTime());
+  });
+
+  const eps2_7d = podcasts[2].episodes.filter(ep => {
+    const d = new Date(ep.pubDate);
+    d.setHours(0, 0, 0, 0);
+    return last7Days.some(date => date.getTime() === d.getTime());
+  });
+
+  // Calculate average duration (today)
+  const totalDur1Today = eps1Today.reduce((sum, ep) => sum + ep.duration, 0);
+  const totalDur2Today = eps2Today.reduce((sum, ep) => sum + ep.duration, 0);
+  const avgDur1Today = eps1Today.length > 0 ? Math.round(totalDur1Today / eps1Today.length / 60) : 0;
+  const avgDur2Today = eps2Today.length > 0 ? Math.round(totalDur2Today / eps2Today.length / 60) : 0;
+
+  // Calculate average duration (7 days)
+  const totalDur1_7d = eps1_7d.reduce((sum, ep) => sum + ep.duration, 0);
+  const totalDur2_7d = eps2_7d.reduce((sum, ep) => sum + ep.duration, 0);
+  const avgDur1_7d = eps1_7d.length > 0 ? Math.round(totalDur1_7d / eps1_7d.length / 60) : 0;
+  const avgDur2_7d = eps2_7d.length > 0 ? Math.round(totalDur2_7d / eps2_7d.length / 60) : 0;
+
+  // Calculate frequency (episodes per day over 7 days)
+  const freq1 = (eps1_7d.length / 7).toFixed(1);
+  const freq2 = (eps2_7d.length / 7).toFixed(1);
+
+  // Calculate total duration (7 days, in hours)
+  const totalHours1_7d = Math.round(totalDur1_7d / 3600);
+  const totalHours2_7d = Math.round(totalDur2_7d / 3600);
+
+  const pod1 = podcasts[1].title;
+  const pod2 = podcasts[2].title;
+
+  let analysis = `<strong>Analyse Comparative sur la Période Observée</strong><br><br>`;
+
+  // Section 1: Frequency Analysis
+  analysis += `${eps1_7d.length > eps2_7d.length ? `<span class="analysis-highlight">${pod1}</span>` : `<span class="analysis-highlight">${pod2}</span>`} présente une activité de publication plus soutenue, avec une moyenne de <strong>${Math.max(freq1, freq2)}</strong> épisode${Math.max(freq1, freq2) > 1.5 ? 's' : ''} par jour, contre <strong>${Math.min(freq1, freq2)}</strong> épisode${Math.min(freq1, freq2) > 1 ? 's' : ''} quotidien${Math.min(freq1, freq2) > 1 ? 's' : ''} pour l'autre. Cette fréquence ${eps1_7d.length > eps2_7d.length ? 'plus élevée de ' + pod1 + ' traduit' : 'moins élevée de ' + pod1 + ' traduit'} une stratégie de présence ${eps1_7d.length > eps2_7d.length ? 'renforcée' : 'plus ciblée'} dans les flux d'écoute.<br><br>`;
+
+  // Section 2: Duration Analysis
+  if (avgDur1_7d !== avgDur2_7d) {
+    const longerPod = avgDur1_7d > avgDur2_7d ? pod1 : pod2;
+    const longerDur = Math.max(avgDur1_7d, avgDur2_7d);
+    const shorterDur = Math.min(avgDur1_7d, avgDur2_7d);
+    analysis += `En revanche, <span class="analysis-highlight">${longerPod}</span> se distingue par des formats plus longs, avec une durée moyenne d'environ <strong>${longerDur} minutes</strong> par épisode, soit ${Math.round((longerDur / shorterDur) * 10) / 10}x celle de l'autre (<strong>${shorterDur} minutes</strong>). Cela suggère un positionnement éditorial davantage orienté vers des contenus approfondis, là où l'autre privilégie des formats ${shorterDur < 15 ? 'courts et plus digestes' : 'modérés'}.<br><br>`;
+  }
+
+  // Section 3: 7-Day Rhythm
+  analysis += `<strong>Rythme de Publication (7 Derniers Jours)</strong><br>`;
+  analysis += `${eps1_7d.length >= eps2_7d.length ? pod1 : pod2} maintient une cadence ${eps1_7d.length >= eps2_7d.length ? 'élevée et régulière' : 'plus modérée'}, favorisant la récurrence d'exposition. ${eps1_7d.length < eps2_7d.length ? pod1 : pod2} adopte un rythme ${eps1_7d.length < eps2_7d.length ? 'plus modéré' : 'soutenu'}, ${totalHours1_7d !== totalHours2_7d ? 'compensé par une durée d\'écoute cumulée ' + (totalHours1_7d > totalHours2_7d ? 'supérieure' : 'équivalente') : 'avec une durée d\'écoute comparable'}.<br><br>`;
+
+  // Section 4: Summary
+  analysis += `<strong>Synthèse Positionnement</strong><br>`;
+  if (eps1_7d.length > eps2_7d.length) {
+    analysis += `<span class="analysis-highlight">${pod1}</span> = volume élevé, régularité, formats ${avgDur1_7d < 15 ? 'courts' : avgDur1_7d < 25 ? 'modérés' : 'longs'}<br>`;
+    analysis += `<span class="analysis-highlight">${pod2}</span> = densité, formats ${avgDur2_7d > 20 ? 'longs' : 'modérés'}, approche éditoriale ${avgDur2_7d > 20 ? 'approfondie' : 'équilibrée'}`;
   } else {
-    analysis += 'Aucun épisode publié aujourd\'hui par l\'un ou l\'autre des podcasts. ';
+    analysis += `<span class="analysis-highlight">${pod2}</span> = volume élevé, régularité, formats ${avgDur2_7d < 15 ? 'courts' : avgDur2_7d < 25 ? 'modérés' : 'longs'}<br>`;
+    analysis += `<span class="analysis-highlight">${pod1}</span> = densité, formats ${avgDur1_7d > 20 ? 'longs' : 'modérés'}, approche éditoriale ${avgDur1_7d > 20 ? 'approfondie' : 'équilibrée'}`;
   }
-
-  if (eps1.length > 0 || eps2.length > 0) {
-    if (avgDur1 > avgDur2) {
-      analysis += `Les épisodes de <span class="analysis-highlight">${podcasts[1].title}</span> sont plus longs en moyenne (${avgDur1} min vs ${avgDur2} min). `;
-    } else if (avgDur2 > avgDur1) {
-      analysis += `Les épisodes de <span class="analysis-highlight">${podcasts[2].title}</span> sont plus longs en moyenne (${avgDur2} min vs ${avgDur1} min). `;
-    } else {
-      analysis += `Les deux podcasts ont une durée moyenne similaire (${avgDur1} min). `;
-    }
-  }
-
-  analysis += 'Consultez la cartographie des 10 jours pour une vue d\'ensemble de l\'activité de publication.';
 
   let html = `<div class="analysis-text">${analysis}</div>`;
-  document.getElementById('analysis-text').innerHTML = html;
-  section.style.display = 'block';
+
+  // If rendering to modal, return HTML string; otherwise render to page
+  if (intoModal) {
+    return html;
+  } else {
+    document.getElementById('analysis-text').innerHTML = html;
+    const section = document.getElementById('analysis-summary-section');
+    section.style.display = 'block';
+  }
 }

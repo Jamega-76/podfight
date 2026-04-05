@@ -964,58 +964,50 @@
       font-family: 'Orbitron', sans-serif;
     }
 
-    .ten-day-heatmap {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 32px;
-      margin-top: 28px;
-      width: 100%;
-    }
-
-    .heatmap-10day-column {
+    .ten-day-heatmap-container {
       display: flex;
-      flex-direction: column;
       gap: 20px;
+      justify-content: space-between;
+      width: 100%;
+      overflow-x: auto;
+      padding: 12px 0;
     }
 
-    .heatmap-10day-title {
-      font-size: 1em;
-      font-weight: 700;
-      color: #ffff00;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      text-shadow: 0 0 8px #ffff00;
-    }
-
-    .heatmap-10day-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
-    }
-
-    .heatmap-10day-day {
-      aspect-ratio: 1;
+    .ten-day-bar-group {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      border-radius: 4px;
+      gap: 12px;
+      flex-shrink: 0;
+      min-width: 70px;
+    }
+
+    .ten-day-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      height: 80px;
+      justify-content: flex-end;
+    }
+
+    .ten-day-bar {
+      min-width: 35px;
       border: 2px solid;
-      transition: all 0.3s ease;
-      cursor: default;
-      font-size: 0.8em;
-    }
-
-    .heatmap-10day-day-label {
-      font-size: 0.65em;
-      margin-bottom: 4px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #00ff88;
       font-weight: 700;
-      text-transform: uppercase;
+      font-size: 0.9em;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 8px currentColor;
     }
 
-    .heatmap-10day-day-count {
-      font-size: 1.1em;
-      font-weight: 900;
+    .ten-day-label {
+      text-align: center;
+      font-size: 0.8em;
+      min-width: 100%;
     }
 
     .analysis-text {
@@ -1025,10 +1017,26 @@
       padding: 28px;
       color: #00ff88;
       font-size: 0.95em;
-      line-height: 1.8;
+      line-height: 1.9;
       margin-top: 20px;
       text-shadow: 0 0 4px #00ff88;
       width: 100%;
+      text-align: left;
+    }
+
+    .analysis-text strong {
+      color: #00ffff;
+      font-weight: 700;
+      text-shadow: 0 0 10px #00ffff;
+      display: block;
+      margin-top: 18px;
+      margin-bottom: 12px;
+      font-size: 1.05em;
+      letter-spacing: 0.5px;
+    }
+
+    .analysis-text strong:first-child {
+      margin-top: 0;
     }
 
     .analysis-highlight {
@@ -1508,9 +1516,21 @@
         margin-bottom: 40px;
       }
 
-      .heatmap-10day-grid {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 6px;
+      .ten-day-bar-group {
+        min-width: 60px;
+      }
+
+      .ten-day-bars {
+        height: 60px;
+      }
+
+      .ten-day-bar {
+        min-width: 30px;
+        font-size: 0.8em;
+      }
+
+      .ten-day-label {
+        font-size: 0.7em;
       }
 
       .episode-list-item {
