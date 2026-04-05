@@ -476,7 +476,10 @@
 
     /* Button */
     .btn-container {
-      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
       margin: 40px auto;
       max-width: 800px;
       padding: 0 20px;
@@ -1948,7 +1951,7 @@
   <div class="container">
     <!-- Logo Section -->
     <div class="logo-section">
-      <img src="logo.png" alt="Podcast Fighter II Turbo" class="logo" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));">
+      <img src="logo.png" alt="Podcast Fighter II Turbo" class="logo" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15)); cursor: pointer;" onclick="location.reload();">
     </div>
 
     <!-- Input Section with Versus Center -->
@@ -1976,7 +1979,7 @@
 
     <!-- Insert Coin Button -->
     <div class="btn-container">
-      <button class="btn-insert-coin" onclick="loadBoth()">🪙 INSÉRER PIÈCE</button>
+      <button class="btn-insert-coin" id="insertCoinBtn" onclick="loadBoth()">🪙 INSÉRER PIÈCE</button>
       <button class="btn-start" id="startBtn" style="display: none; margin-left: 20px;" onclick="startFight()">▶ FIGHT</button>
       <div id="error-msg" style="margin-top: 15px;"></div>
     </div>
