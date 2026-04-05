@@ -667,6 +667,22 @@ function render10DayHeatmap() {
 
   section.style.display = 'block';
 
+  // Find peak days for each podcast
+  let maxDay1 = { date: '', count: 0, dayName: '' };
+  let maxDay2 = { date: '', count: 0, dayName: '' };
+
+  dates.forEach(date => {
+    const dateStr = date.toLocaleDateString('fr-FR', { month: '2-digit', day: '2-digit' });
+    const dayName = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'][date.getDay()];
+
+    if (dayCounts1[dateStr] > maxDay1.count) {
+      maxDay1 = { date: dateStr, count: dayCounts1[dateStr], dayName };
+    }
+    if (dayCounts2[dateStr] > maxDay2.count) {
+      maxDay2 = { date: dateStr, count: dayCounts2[dateStr], dayName };
+    }
+  });
+
   let html = '<div class="ten-day-heatmap-container">';
 
   // Render 10 days horizontally
@@ -702,6 +718,17 @@ function render10DayHeatmap() {
   });
 
   html += '</div>';
+
+  // Add peak day information
+  html += `<div class="ten-day-peak-info">
+    <div style="color: #ff00ff; font-weight: 700; margin-top: 20px; font-size: 0.95em;">
+      📌 ${podcasts[1].title}: Jour de pic = <span style="color: #ffff00;">${maxDay1.dayName} ${maxDay1.date}</span> (${maxDay1.count} épisode${maxDay1.count > 1 ? 's' : ''})
+    </div>
+    <div style="color: #ffd709; font-weight: 700; margin-top: 12px; font-size: 0.95em;">
+      📌 ${podcasts[2].title}: Jour de pic = <span style="color: #ffff00;">${maxDay2.dayName} ${maxDay2.date}</span> (${maxDay2.count} épisode${maxDay2.count > 1 ? 's' : ''})
+    </div>
+  </div>`;
+
   document.getElementById('ten-day-heatmap').innerHTML = html;
 }
 
