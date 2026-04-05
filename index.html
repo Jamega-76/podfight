@@ -1977,15 +1977,15 @@
       </div>
     </div>
 
-    <!-- Status Message -->
-    <div id="urls-ready-msg" style="display: none; text-align: center; margin: 20px 0; color: #00ff88; font-weight: 700; font-size: 14px; text-shadow: 0 0 10px #00ff88;">
-      URLs remplies! Cliquez sur INSERT COIN pour charger.
-    </div>
-
-    <!-- Insert Coin Button -->
-    <div class="btn-container">
-      <button class="btn-insert-coin" id="insertCoinBtn" onclick="loadBoth()">🪙 INSERT COIN</button>
-      <button class="btn-start" id="startBtn" style="display: none; margin-left: 20px;" onclick="startFight()">▶ FIGHT</button>
+    <!-- Insert Coin Button with Status Message -->
+    <div class="btn-container" style="flex-direction: column;">
+      <div id="urls-ready-msg" style="display: none; text-align: center; color: #00ff88; font-weight: 700; font-size: 14px; text-shadow: 0 0 10px #00ff88; margin-bottom: 20px;">
+        URLs remplies! Cliquez sur INSERT COIN pour charger.
+      </div>
+      <div style="display: flex; justify-content: center; gap: 20px; align-items: center;">
+        <button class="btn-insert-coin" id="insertCoinBtn" onclick="loadBoth()">🪙 INSERT COIN</button>
+        <button class="btn-start" id="startBtn" style="display: none;" onclick="startFight()">▶ FIGHT</button>
+      </div>
       <div id="error-msg" style="margin-top: 15px;"></div>
     </div>
 
