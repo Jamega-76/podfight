@@ -555,12 +555,13 @@ function renderEpisodeFullList() {
   const eps1 = podcasts[1].episodes.filter(ep => new Date(ep.pubDate).toDateString() === today);
   const eps2 = podcasts[2].episodes.filter(ep => new Date(ep.pubDate).toDateString() === today);
 
-  let html = '<div class="full-list-grid">';
+  let html = '<div class="episodes-horizontal-container">';
 
   // Podcast 1
-  html += '<div class="episode-list-column">';
-  html += `<div class="episode-list-header">📻 ${podcasts[1].title}</div>`;
+  html += '<div class="episodes-podcast-column">';
+  html += `<div class="episodes-podcast-header">${podcasts[1].title}</div>`;
   if (eps1.length > 0) {
+    html += '<div class="episodes-list-items">';
     eps1.forEach(ep => {
       const duration = Math.round(ep.duration / 60);
       html += `<div class="episode-list-item">
@@ -568,16 +569,18 @@ function renderEpisodeFullList() {
                  <div class="episode-item-duration">⏱️ ${duration} min</div>
                </div>`;
     });
+    html += '</div>';
     html += `<div class="episode-count-badge">${eps1.length} épisode${eps1.length > 1 ? 's' : ''}</div>`;
   } else {
-    html += '<div style="color: #666; padding: 20px; text-align: center;">Aucun épisode aujourd\'hui</div>';
+    html += '<div class="episodes-empty">Aucun épisode</div>';
   }
   html += '</div>';
 
   // Podcast 2
-  html += '<div class="episode-list-column">';
-  html += `<div class="episode-list-header">📻 ${podcasts[2].title}</div>`;
+  html += '<div class="episodes-podcast-column">';
+  html += `<div class="episodes-podcast-header">${podcasts[2].title}</div>`;
   if (eps2.length > 0) {
+    html += '<div class="episodes-list-items">';
     eps2.forEach(ep => {
       const duration = Math.round(ep.duration / 60);
       html += `<div class="episode-list-item">
@@ -585,9 +588,10 @@ function renderEpisodeFullList() {
                  <div class="episode-item-duration">⏱️ ${duration} min</div>
                </div>`;
     });
+    html += '</div>';
     html += `<div class="episode-count-badge">${eps2.length} épisode${eps2.length > 1 ? 's' : ''}</div>`;
   } else {
-    html += '<div style="color: #666; padding: 20px; text-align: center;">Aucun épisode aujourd\'hui</div>';
+    html += '<div class="episodes-empty">Aucun épisode</div>';
   }
   html += '</div>';
 
@@ -615,7 +619,7 @@ function renderAvgDurationToday() {
     return secs > 0 ? `${mins}m ${secs}s` : `${mins}m`;
   };
 
-  let html = '<div class="avg-duration-grid">';
+  let html = '<div class="duration-horizontal-container">';
   html += `<div class="duration-card">
              <div class="duration-label">${podcasts[1].title}</div>
              <div class="duration-value">${formatDuration(avgDuration1)}</div>

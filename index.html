@@ -868,18 +868,61 @@
       width: 100%;
     }
 
-    .full-list-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    .episodes-horizontal-container {
+      display: flex;
       gap: 32px;
       margin-top: 28px;
       width: 100%;
+      justify-content: space-between;
     }
 
-    .episode-list-column {
+    .episodes-podcast-column {
       display: flex;
       flex-direction: column;
       gap: 16px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .episodes-podcast-header {
+      font-size: 1.1em;
+      font-weight: 700;
+      color: #ffff00;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px #ffff00;
+      margin-bottom: 12px;
+    }
+
+    .episodes-list-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+      overflow-y: auto;
+      max-height: 300px;
+      padding-right: 8px;
+    }
+
+    .episodes-list-items::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .episodes-list-items::-webkit-scrollbar-track {
+      background: rgba(0, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+
+    .episodes-list-items::-webkit-scrollbar-thumb {
+      background: #00ffff;
+      border-radius: 3px;
+    }
+
+    .episodes-empty {
+      color: #666;
+      padding: 20px;
+      text-align: center;
+      font-style: italic;
     }
 
     .episode-list-header {
@@ -926,12 +969,12 @@
       box-shadow: 0 0 10px #ff00ff;
     }
 
-    .avg-duration-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    .duration-horizontal-container {
+      display: flex;
       gap: 32px;
       margin-top: 28px;
       width: 100%;
+      justify-content: space-between;
     }
 
     .duration-card {
@@ -945,6 +988,8 @@
       justify-content: center;
       align-items: center;
       gap: 12px;
+      flex: 1;
+      min-width: 0;
     }
 
     .duration-label {
@@ -1486,8 +1531,13 @@
         padding: 20px;
       }
 
-      .podcast-cards, .heatmap-grid, .full-list-grid, .avg-duration-grid, .ten-day-heatmap {
+      .podcast-cards, .heatmap-grid, .ten-day-heatmap {
         grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .episodes-horizontal-container, .duration-horizontal-container {
+        flex-direction: column;
         gap: 20px;
       }
 
