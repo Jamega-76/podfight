@@ -653,16 +653,6 @@
     }
 
     /* Episodes Today Section */
-    .episodes-today {
-      background: linear-gradient(135deg, rgba(0, 50, 100, 0.3) 0%, rgba(100, 0, 150, 0.2) 100%);
-      border: 2px solid #00ffff;
-      padding: 40px 52px;
-      border-radius: 4px;
-      box-shadow: 0 0 25px #00ffff, inset 0 0 15px rgba(0, 255, 255, 0.1);
-      margin-bottom: 60px;
-      width: 100%;
-    }
-
     @keyframes titleGlow {
       0%, 100% {
         color: #ffff00;
@@ -686,127 +676,6 @@
       animation: titleGlow 2.5s ease-in-out infinite;
       display: inline-block;
       width: 100%;
-    }
-
-    .episodes-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 28px;
-      margin-bottom: 0;
-      width: 100%;
-    }
-
-    .episodes-list {
-      text-align: left;
-      display: flex;
-      flex-direction: column;
-      min-height: 460px;
-      padding: 28px 32px;
-      background: linear-gradient(135deg, rgba(0, 30, 60, 0.4) 0%, rgba(60, 0, 100, 0.3) 100%);
-      border-radius: 4px;
-      border: 2px solid #ff00ff;
-      transition: all 0.3s ease;
-      width: 100%;
-      box-shadow: 0 0 15px #ff00ff, inset 0 0 10px rgba(255, 0, 255, 0.1);
-    }
-
-    .episodes-list:hover {
-      border-color: #00ffff;
-      box-shadow: 0 0 25px #ff00ff, 0 0 15px #00ffff, inset 0 0 15px rgba(0, 255, 255, 0.1);
-    }
-
-    .episodes-list h4 {
-      font-size: 0.95em;
-      color: #00ffff;
-      margin-bottom: 24px;
-      font-weight: 700;
-      padding-bottom: 14px;
-      border-bottom: 2px solid #ff00ff;
-      text-align: center;
-      letter-spacing: 1px;
-      text-shadow: 0 0 8px #ff00ff;
-    }
-
-    .episodes-list:nth-child(1) h4 {
-      color: #ff00ff;
-      border-bottom-color: #ff00ff;
-      text-shadow: 0 0 8px #ff00ff;
-    }
-
-    .episodes-list:nth-child(2) h4 {
-      color: #ffff00;
-      border-bottom-color: #ffff00;
-      text-shadow: 0 0 8px #ffff00;
-    }
-
-    .episode-item {
-      background: rgba(0, 50, 100, 0.3);
-      padding: 14px 16px;
-      margin-bottom: 12px;
-      border-left: 3px solid #ff00ff;
-      border-radius: 2px;
-      font-size: 0.9em;
-      line-height: 1.6;
-      color: #00ff88;
-      flex-shrink: 0;
-      box-shadow: 0 0 8px rgba(255, 0, 255, 0.2);
-      transition: all 0.3s ease;
-    }
-
-    .episode-item:hover {
-      box-shadow: 0 0 15px #ff00ff, 0 0 8px #00ffff;
-      transform: translateX(4px);
-      border-left-color: #00ffff;
-    }
-
-    .episodes-list:nth-child(2) .episode-item {
-      border-left-color: #ffd709;
-      color: #7f8c8d;
-      font-style: italic;
-      background: #f5f7fa;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 70px;
-      text-align: center;
-    }
-
-    .duration-box {
-      background: linear-gradient(135deg, rgba(0, 30, 60, 0.3) 0%, rgba(100, 0, 150, 0.2) 100%);
-      padding: 28px 24px;
-      border-radius: 4px;
-      text-align: center;
-      margin-top: auto;
-      border: 2px solid #00ffff;
-      box-shadow: 0 0 12px #00ffff, inset 0 0 8px rgba(0, 255, 255, 0.1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-    }
-
-    .duration-label {
-      font-size: 0.65em;
-      color: #00ffff;
-      margin-bottom: 12px;
-      text-transform: uppercase;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-shadow: 0 0 6px #00ffff;
-    }
-
-    .duration-value {
-      font-size: 2.8em;
-      font-weight: 900;
-      color: #ff00ff;
-      line-height: 1;
-      text-shadow: 0 0 12px #ff00ff;
-    }
-
-    .episodes-list:nth-child(2) .duration-value {
-      color: #ffff00;
-      text-shadow: 0 0 12px #ffff00;
     }
 
     /* Timeline Section */
@@ -1231,6 +1100,8 @@
 
     .fight-content {
       max-width: 900px;
+      max-height: 90vh;
+      overflow-y: auto;
       text-align: center;
       color: #00ffff;
       padding: 40px;
@@ -1607,7 +1478,7 @@
         padding: 20px;
       }
 
-      .podcast-cards, .episodes-grid, .heatmap-grid, .full-list-grid, .avg-duration-grid, .ten-day-heatmap {
+      .podcast-cards, .heatmap-grid, .full-list-grid, .avg-duration-grid, .ten-day-heatmap {
         grid-template-columns: 1fr;
         gap: 20px;
       }
@@ -1816,17 +1687,7 @@
       <div class="podcast-cards" id="podcast-cards"></div>
 
       <!-- Episodes Today -->
-      <div class="episodes-today" id="episodes-today-section" style="display: none;">
-        <div class="section-title">📻 Épisodes Sortis Aujourd'hui</div>
-        <div class="episodes-grid" id="episodes-grid"></div>
-      </div>
-
       <!-- Timeline -->
-      <div class="timeline-section" id="timeline-section" style="display: none;">
-        <div class="section-title">📈 Comparaison 7 Derniers Jours</div>
-        <div class="timeline-container" id="timeline"></div>
-      </div>
-
       <!-- Heatmap -->
       <div class="heatmap-section" id="heatmap-section" style="display: none;">
         <div class="section-title">📅 Jours les Plus Actifs (10 Derniers Jours)</div>
@@ -1843,6 +1704,12 @@
       <div class="avg-duration-today-section" id="avg-duration-today-section" style="display: none;">
         <div class="section-title">⏱️ Durée Moyenne (Aujourd'hui)</div>
         <div class="avg-duration-grid" id="avg-duration-grid"></div>
+      </div>
+
+      <!-- Timeline 7 Days -->
+      <div class="timeline-section" id="timeline-section" style="display: none;">
+        <div class="section-title">📈 Comparaison 7 Derniers Jours</div>
+        <div class="timeline-container" id="timeline"></div>
       </div>
 
       <!-- 10-Day Activity Heatmap -->
