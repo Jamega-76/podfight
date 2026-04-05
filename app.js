@@ -499,19 +499,6 @@ function runFightAnimation() {
   // RÉSULTAT (4-8s+)
   setTimeout(() => {
     const winnerPodcast = podcasts[winner];
-    const winnerStats = winner === 1 ? stats1 : stats2;
-    const loserStats = winner === 1 ? stats2 : stats1;
-
-    let explanation = '';
-    if (winnerStats.episodeCount > loserStats.episodeCount) {
-      explanation += `<strong>${podcasts[winner].title}</strong> a sorti <strong>${winnerStats.episodeCount}</strong> épisode${winnerStats.episodeCount > 1 ? 's' : ''} aujourd'hui vs ${loserStats.episodeCount}. `;
-    }
-    if (winnerStats.totalMinutes > loserStats.totalMinutes) {
-      explanation += `<strong>${winnerStats.totalMinutes}</strong> minutes de contenu vs ${loserStats.totalMinutes}. `;
-    }
-    if (winnerStats.avgDuration > loserStats.avgDuration) {
-      explanation += `Durée moyenne: <strong>${winnerStats.avgDuration}m</strong> vs ${loserStats.avgDuration}m!`;
-    }
 
     let html = `
       <div class="winner-section" style="animation-delay: 0.5s;">
@@ -520,7 +507,6 @@ function runFightAnimation() {
         </div>
         <div style="font-size: 4.5em; font-weight: 900; margin-bottom: 20px; color: #ffd709; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 20px rgba(255, 215, 9, 0.6);">${winnerPodcast.title}</div>
         <div style="font-size: 3.5em; color: #ff89ab; margin-bottom: 40px; font-weight: 700; letter-spacing: 2px; animation: pulse 1s infinite;">WIN!!!!</div>
-        <div style="font-size: 1.2em; line-height: 2; color: #ccc; text-align: left; max-width: 700px; margin: 0 auto; padding: 30px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; border-left: 4px solid #ffd709;">${explanation}</div>
       </div>
     `;
     content.innerHTML = html;
