@@ -3,9 +3,10 @@
   "configurations": [
     {
       "name": "podfight",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8080"],
-      "port": 8080
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["start-server.sh"],
+      "port": 8000,
+      "autoPort": true
     }
   ]
 }

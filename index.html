@@ -1241,6 +1241,233 @@
       transform: translateY(0);
     }
 
+    /* Matrix Button */
+    .matrix-button {
+      position: fixed;
+      top: 70px;
+      right: 100px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #00ff00 0%, #00aa00 100%);
+      border: 2px solid #00ff00;
+      color: #000;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 11px;
+      z-index: 99;
+      transition: all 0.3s;
+      box-shadow: 0 0 15px #00ff00, 0 0 8px #00ff00;
+      letter-spacing: 0.8px;
+      font-family: 'Orbitron', sans-serif;
+      text-transform: uppercase;
+    }
+
+    .matrix-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px #00ff00, 0 0 15px #00ff00, 0 0 10px #ffff00;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    .matrix-button:active {
+      transform: translateY(0);
+    }
+
+    /* Matrix Mode Styles */
+    body.matrix-mode {
+      background: #000 !important;
+      color: #00ff00 !important;
+    }
+
+    body.matrix-mode::before {
+      background: #000 !important;
+    }
+
+    body.matrix-mode::after {
+      opacity: 0.1 !important;
+    }
+
+    .matrix-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 1002;
+      animation: fadeIn 0.3s ease-in;
+      overflow-y: auto;
+      border: 3px solid #00ff00;
+      box-shadow: inset 0 0 60px rgba(0, 255, 0, 0.2), 0 0 40px #00ff00;
+      font-family: 'Courier New', monospace;
+    }
+
+    .matrix-modal.show {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 40px 20px;
+    }
+
+    .matrix-content {
+      max-width: 1000px;
+      width: 100%;
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    .matrix-header {
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      animation: matrixGlitch 2s infinite;
+    }
+
+    @keyframes matrixGlitch {
+      0%, 100% {
+        text-shadow: 0 0 10px #00ff00, 0 0 5px #00ff00;
+      }
+      50% {
+        text-shadow: -2px 0 #00ff00, 2px 0 #00ff00, 0 0 10px #00ff00;
+      }
+    }
+
+    .matrix-close-btn {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      background: #00ff00;
+      color: #000;
+      border: 2px solid #00ff00;
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 4px;
+      z-index: 1003;
+      font-family: 'Orbitron', sans-serif;
+      transition: all 0.3s;
+      box-shadow: 0 0 10px #00ff00;
+    }
+
+    .matrix-close-btn:hover {
+      box-shadow: 0 0 20px #00ff00, 0 0 10px #00ffff;
+      transform: scale(1.05);
+    }
+
+    .matrix-card {
+      background: rgba(0, 20, 0, 0.8);
+      border: 2px solid #00ff00;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 15px #00ff00, inset 0 0 10px rgba(0, 255, 0, 0.1);
+      border-radius: 2px;
+    }
+
+    .matrix-card-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
+      letter-spacing: 1px;
+    }
+
+    .matrix-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .matrix-stat {
+      background: rgba(0, 30, 0, 0.6);
+      border: 1px solid #00ff00;
+      padding: 15px;
+      text-align: center;
+      border-radius: 2px;
+    }
+
+    .matrix-stat-label {
+      font-size: 12px;
+      color: #00cc00;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .matrix-stat-value {
+      font-size: 32px;
+      font-weight: bold;
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    .matrix-code {
+      background: #000;
+      border: 1px solid #00ff00;
+      padding: 15px;
+      margin: 10px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: #00ff00;
+      overflow-x: auto;
+      border-radius: 2px;
+    }
+
+    .matrix-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .matrix-column {
+      background: rgba(0, 20, 0, 0.6);
+      border: 1px solid #00ff00;
+      padding: 15px;
+      border-radius: 2px;
+    }
+
+    .matrix-column-title {
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: #00ff00;
+      text-shadow: 0 0 8px #00ff00;
+    }
+
+    .matrix-item {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+      font-size: 14px;
+      color: #00ff00;
+    }
+
+    .matrix-item:last-child {
+      border-bottom: none;
+    }
+
+    /* Falling characters animation */
+    @keyframes matrixFall {
+      0% {
+        opacity: 1;
+        transform: translateY(-100px) rotateX(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(100vh) rotateX(180deg);
+      }
+    }
+
+    .matrix-char {
+      position: fixed;
+      font-family: 'Courier New', monospace;
+      font-size: 20px;
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: 1;
+      animation: matrixFall linear forwards;
+    }
+
     /* History Modal */
     .history-modal {
       display: none;
@@ -1702,6 +1929,9 @@
   <!-- History Button -->
   <button class="history-button" onclick="showHistoryModal()">📋 HISTORIQUE</button>
 
+  <!-- Matrix Button -->
+  <button class="matrix-button" onclick="showMatrixMode()">🐰 FOLLOW THE WHITE RABBIT</button>
+
   <!-- History Modal -->
   <div class="history-modal" id="historyModal" onclick="if(event.target === this) closeHistoryModal()">
     <div class="history-modal-content">
@@ -1805,6 +2035,51 @@
   <div class="fight-modal" id="fightModal">
     <div class="fight-content" id="fightContent">
       <!-- Fight animation will be rendered here -->
+    </div>
+  </div>
+
+  <!-- Matrix Modal -->
+  <div class="matrix-modal" id="matrixModal">
+    <button class="matrix-close-btn" onclick="closeMatrixMode()">EXIT</button>
+    <div class="matrix-content">
+      <div class="matrix-header">⬡ ENTERING THE MATRIX ⬡</div>
+
+      <div class="matrix-card">
+        <div class="matrix-card-title">>> PODCAST_DATA_STREAM</div>
+        <div class="matrix-stats" id="matrixStats">
+          <!-- Stats will be inserted here -->
+        </div>
+      </div>
+
+      <div class="matrix-card">
+        <div class="matrix-card-title">>> EPISODE_ANALYSIS</div>
+        <div class="matrix-columns" id="matrixEpisodes">
+          <!-- Episodes will be inserted here -->
+        </div>
+      </div>
+
+      <div class="matrix-card">
+        <div class="matrix-card-title">>> TEMPORAL_DISTRIBUTION</div>
+        <div id="matrixTimeline">
+          <!-- Timeline will be inserted here -->
+        </div>
+      </div>
+
+      <div class="matrix-card">
+        <div class="matrix-card-title">>> COMPARATIVE_ANALYSIS</div>
+        <div class="matrix-code" id="matrixAnalysis">
+          <!-- Analysis will be inserted here -->
+        </div>
+      </div>
+
+      <div class="matrix-card" style="text-align: center; padding: 30px;">
+        <div style="font-size: 24px; margin-bottom: 20px;">🐰</div>
+        <div style="color: #00ff00; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.6;">
+          > You have taken the red pill.<br>
+          > Welcome to reality, neo.<br>
+          > The Matrix cannot hold truth from those who seek it.
+        </div>
+      </div>
     </div>
   </div>
 

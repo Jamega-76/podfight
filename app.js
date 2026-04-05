@@ -889,3 +889,176 @@ function renderAnalysisSummary(intoModal = false) {
     section.style.display = 'block';
   }
 }
+
+// Matrix Mode Functions
+function showMatrixMode() {
+  if (!podcasts[1] || !podcasts[2]) {
+    alert('⚠️ You must load podcast feeds first');
+    return;
+  }
+
+  document.body.classList.add('matrix-mode');
+  const modal = document.getElementById('matrixModal');
+  modal.classList.add('show');
+
+  // Generate Matrix falling characters animation
+  generateMatrixCharacters();
+
+  // Populate Matrix data
+  populateMatrixData();
+}
+
+function closeMatrixMode() {
+  document.body.classList.remove('matrix-mode');
+  const modal = document.getElementById('matrixModal');
+  modal.classList.remove('show');
+
+  // Clear falling characters
+  document.querySelectorAll('.matrix-char').forEach(char => char.remove());
+}
+
+function generateMatrixCharacters() {
+  const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+
+  for (let i = 0; i < 30; i++) {
+    const char = document.createElement('div');
+    char.className = 'matrix-char';
+    char.textContent = chars[Math.floor(Math.random() * chars.length)];
+
+    const x = Math.random() * window.innerWidth;
+    const duration = 3 + Math.random() * 4;
+    const delay = Math.random() * 2;
+
+    char.style.left = x + 'px';
+    char.style.top = '-30px';
+    char.style.animationDuration = duration + 's';
+    char.style.animationDelay = delay + 's';
+
+    document.body.appendChild(char);
+
+    setTimeout(() => {
+      char.remove();
+    }, (duration + delay) * 1000);
+  }
+
+  // Continuously generate new characters
+  setInterval(() => {
+    if (document.getElementById('matrixModal').classList.contains('show')) {
+      const char = document.createElement('div');
+      char.className = 'matrix-char';
+      char.textContent = chars[Math.floor(Math.random() * chars.length)];
+
+      const x = Math.random() * window.innerWidth;
+      const duration = 3 + Math.random() * 4;
+
+      char.style.left = x + 'px';
+      char.style.top = '-30px';
+      char.style.animationDuration = duration + 's';
+
+      document.body.appendChild(char);
+
+      setTimeout(() => {
+        char.remove();
+      }, duration * 1000);
+    }
+  }, 1500);
+}
+
+function populateMatrixData() {
+  if (!podcasts[1] || !podcasts[2]) return;
+
+  const pod1 = podcasts[1];
+  const pod2 = podcasts[2];
+
+  const today = new Date().toDateString();
+  const eps1Today = pod1.episodes.filter(ep => new Date(ep.pubDate).toDateString() === today);
+  const eps2Today = pod2.episodes.filter(ep => new Date(ep.pubDate).toDateString() === today);
+
+  // Stats
+  const dur1 = eps1Today.length > 0 ? Math.round(eps1Today.reduce((s, e) => s + e.duration, 0) / eps1Today.length / 60) : 0;
+  const dur2 = eps2Today.length > 0 ? Math.round(eps2Today.reduce((s, e) => s + e.duration, 0) / eps2Today.length / 60) : 0;
+
+  const statsHtml = `
+    <div class="matrix-stat">
+      <div class="matrix-stat-label">&gt; ${pod1.title}</div>
+      <div class="matrix-stat-value">${eps1Today.length}</div>
+      <div class="matrix-stat-label">AVG: ${dur1}min</div>
+    </div>
+    <div class="matrix-stat">
+      <div class="matrix-stat-label">&gt; ${pod2.title}</div>
+      <div class="matrix-stat-value">${eps2Today.length}</div>
+      <div class="matrix-stat-label">AVG: ${dur2}min</div>
+    </div>
+  `;
+  document.getElementById('matrixStats').innerHTML = statsHtml;
+
+  // Episodes
+  const ep1Html = eps1Today.length > 0 ? eps1Today.map(ep => `
+    <div class="matrix-item">&gt; ${ep.title.substring(0, 35)}...</div>
+  `).join('') : '<div class="matrix-item">&gt; [NO_DATA_TODAY]</div>';
+
+  const ep2Html = eps2Today.length > 0 ? eps2Today.map(ep => `
+    <div class="matrix-item">&gt; ${ep.title.substring(0, 35)}...</div>
+  `).join('') : '<div class="matrix-item">&gt; [NO_DATA_TODAY]</div>';
+
+  const episodesHtml = `
+    <div class="matrix-column">
+      <div class="matrix-column-title">&gt;&gt; ${pod1.title.substring(0, 30)}</div>
+      ${ep1Html}
+    </div>
+    <div class="matrix-column">
+      <div class="matrix-column-title">&gt;&gt; ${pod2.title.substring(0, 30)}</div>
+      ${ep2Html}
+    </div>
+  `;
+  document.getElementById('matrixEpisodes').innerHTML = episodesHtml;
+
+  // Timeline (7 days)
+  const last7Days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    last7Days.push(d);
+  }
+
+  const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  const timeline = last7Days.map(date => {
+    const dayStr = date.toDateString();
+    const count1 = pod1.episodes.filter(ep => new Date(ep.pubDate).toDateString() === dayStr).length;
+    const count2 = pod2.episodes.filter(ep => new Date(ep.pubDate).toDateString() === dayStr).length;
+    const day = dayNames[date.getDay()];
+    const dateNum = date.getDate().toString().padStart(2, '0');
+
+    return `<div class="matrix-item">&gt; ${day} ${dateNum}: P1=${count1} P2=${count2}</div>`;
+  }).join('');
+
+  document.getElementById('matrixTimeline').innerHTML = timeline;
+
+  // Analysis
+  const winner = eps1Today.length > eps2Today.length ? pod1.title : pod2.title;
+  const analysisText = `
+> SYSTEM.ANALYSIS.EXECUTE()
+> ========================
+> PODCAST_1: ${pod1.title}
+> EPISODES_TODAY: ${eps1Today.length}
+> AVG_DURATION: ${dur1} minutes
+>
+> PODCAST_2: ${pod2.title}
+> EPISODES_TODAY: ${eps2Today.length}
+> AVG_DURATION: ${dur2} minutes
+>
+> WINNER: ${winner}
+> STATUS: [ANALYSIS_COMPLETE]
+> ========================
+`.trim();
+
+  document.getElementById('matrixAnalysis').textContent = analysisText;
+}
+
+// Close matrix modal when clicking outside
+document.addEventListener('click', function(event) {
+  const modal = document.getElementById('matrixModal');
+  if (event.target === modal) {
+    closeMatrixMode();
+  }
+});
