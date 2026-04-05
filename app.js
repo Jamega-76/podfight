@@ -1063,3 +1063,25 @@ document.addEventListener('click', function(event) {
     closeMatrixMode();
   }
 });
+
+// Check if both URLs are filled and show message
+function checkUrlsReady() {
+  const url1 = document.getElementById('rss-1').value.trim();
+  const url2 = document.getElementById('rss-2').value.trim();
+  const msg = document.getElementById('urls-ready-msg');
+
+  if (url1 && url2) {
+    msg.style.display = 'block';
+  } else {
+    msg.style.display = 'none';
+  }
+}
+
+// Add event listeners to RSS inputs
+document.addEventListener('DOMContentLoaded', function() {
+  const rss1 = document.getElementById('rss-1');
+  const rss2 = document.getElementById('rss-2');
+
+  if (rss1) rss1.addEventListener('input', checkUrlsReady);
+  if (rss2) rss2.addEventListener('input', checkUrlsReady);
+});
