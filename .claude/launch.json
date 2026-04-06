@@ -4,9 +4,8 @@
     {
       "name": "podfight",
       "runtimeExecutable": "bash",
-      "runtimeArgs": ["start-server.sh"],
-      "port": 8000,
-      "autoPort": true
+      "runtimeArgs": ["-c", "cd /Users/jlassiri/Desktop/Podfight2 && python3 -m http.server 8000"],
+      "port": 8000
     }
   ]
 }

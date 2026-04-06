@@ -1089,4 +1089,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
   if (rss1) rss1.addEventListener('input', checkUrlsReady);
   if (rss2) rss2.addEventListener('input', checkUrlsReady);
+
+  // Load clean mode preference from localStorage
+  if (localStorage.getItem('cleanMode') === 'true') {
+    toggleCleanMode();
+  }
 });
+
+// Toggle Clean Mode
+function toggleCleanMode() {
+  const isCleanMode = document.body.classList.toggle('clean-mode');
+  const btn = document.getElementById('cleanViewBtn');
+
+  // Update button text and styling
+  if (isCleanMode) {
+    btn.textContent = '🎮 ARCADE MODE';
+    btn.style.background = 'linear-gradient(135deg, #ff9500 0%, #ff7a00 100%)';
+    localStorage.setItem('cleanMode', 'true');
+  } else {
+    btn.textContent = '🎛️ CLEAN VIEW';
+    btn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    localStorage.setItem('cleanMode', 'false');
+  }
+}

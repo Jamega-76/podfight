@@ -1275,6 +1275,211 @@
       transform: translateY(0);
     }
 
+    /* Clean View Button */
+    .clean-view-button {
+      position: fixed;
+      top: 120px;
+      right: 100px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: 2px solid #667eea;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 11px;
+      z-index: 99;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      letter-spacing: 0.8px;
+      font-family: 'Orbitron', sans-serif;
+      text-transform: uppercase;
+    }
+
+    .clean-view-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .clean-view-button:active {
+      transform: translateY(0);
+    }
+
+    /* CLEAN MODE - Minimal Apple/Podflow Style */
+    body.clean-mode {
+      background: #f8f8fa !important;
+      color: #1c1c1e !important;
+    }
+
+    body.clean-mode::before {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.05) 100%), #f8f8fa !important;
+    }
+
+    body.clean-mode::after {
+      opacity: 0 !important;
+    }
+
+    body.clean-mode .sprite {
+      display: none !important;
+    }
+
+    body.clean-mode .logo-section {
+      margin-bottom: 40px !important;
+    }
+
+    body.clean-mode .logo {
+      max-width: 300px !important;
+      filter: none !important;
+      animation: none !important;
+    }
+
+    body.clean-mode .nav-arcade {
+      display: flex !important;
+      background: rgba(255, 255, 255, 0.95) !important;
+      border: 1px solid #e5e5ea !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    body.clean-mode .nav-button {
+      background: #f2f2f7 !important;
+      border-color: #e5e5ea !important;
+      color: #1c1c1e !important;
+      box-shadow: none !important;
+    }
+
+    body.clean-mode .nav-button:hover {
+      background: #e5e5ea !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    body.clean-mode .podcast-card {
+      background: #ffffff !important;
+      border: 1px solid #e5e5ea !important;
+      border-radius: 16px !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    body.clean-mode .podcast-card:hover {
+      border-color: #d5d5d7 !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    body.clean-mode .section-title {
+      color: #1c1c1e !important;
+      text-shadow: none !important;
+      font-size: 18px !important;
+      font-weight: 700 !important;
+    }
+
+    body.clean-mode .btn-insert-coin {
+      background: linear-gradient(135deg, #34c759 0%, #30b752 100%) !important;
+      border: none !important;
+      color: #fff !important;
+      box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3) !important;
+      border-radius: 10px !important;
+    }
+
+    body.clean-mode .btn-insert-coin:hover {
+      box-shadow: 0 6px 16px rgba(52, 199, 89, 0.4) !important;
+      transform: translateY(-2px) !important;
+    }
+
+    body.clean-mode .btn-start {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      border: none !important;
+      color: #fff !important;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+      border-radius: 10px !important;
+      font-family: 'Orbitron', sans-serif !important;
+      font-size: 14px !important;
+    }
+
+    body.clean-mode .btn-start:hover {
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4) !important;
+      transform: translateY(-2px) !important;
+    }
+
+    body.clean-mode .btn-fight {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      border: none !important;
+      color: #fff !important;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+      border-radius: 10px !important;
+    }
+
+    body.clean-mode .btn-fight:hover {
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4) !important;
+      transform: translateY(-3px) !important;
+    }
+
+    body.clean-mode .history-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      border: none !important;
+      color: #fff !important;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+      border-radius: 8px !important;
+    }
+
+    body.clean-mode .history-button:hover {
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4) !important;
+    }
+
+    body.clean-mode .history-modal {
+      background: #f8f8fa !important;
+      border: none !important;
+      box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    body.clean-mode .history-modal-content {
+      background: #ffffff !important;
+      border-radius: 20px !important;
+      border: none !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    body.clean-mode .fight-modal {
+      background: #f8f8fa !important;
+      border: none !important;
+      box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    body.clean-mode .fight-content {
+      background: #ffffff !important;
+      border-radius: 20px !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+      padding: 40px !important;
+    }
+
+    body.clean-mode .round-title {
+      color: #1c1c1e !important;
+      text-shadow: none !important;
+    }
+
+    body.clean-mode .fight-action {
+      color: #667eea !important;
+      text-shadow: none !important;
+    }
+
+    body.clean-mode .battle-image {
+      border-radius: 12px !important;
+      border: 1px solid #e5e5ea !important;
+      background: #f2f2f7 !important;
+    }
+
+    body.clean-mode .matrix-button {
+      display: none !important;
+    }
+
+    body.clean-mode .clean-view-button {
+      background: linear-gradient(135deg, #ff9500 0%, #ff7a00 100%) !important;
+      border-color: #ff9500 !important;
+      box-shadow: 0 4px 12px rgba(255, 149, 0, 0.3) !important;
+    }
+
+    body.clean-mode .clean-view-button:hover {
+      box-shadow: 0 8px 20px rgba(255, 149, 0, 0.4) !important;
+    }
+
     /* Matrix Mode Styles */
     body.matrix-mode {
       background: #000 !important;
@@ -1931,6 +2136,9 @@
 
   <!-- History Button -->
   <button class="history-button" onclick="showHistoryModal()">📋 HISTORIQUE</button>
+
+  <!-- Clean View Button -->
+  <button class="clean-view-button" id="cleanViewBtn" onclick="toggleCleanMode()">🎛️ CLEAN VIEW</button>
 
   <!-- Matrix Button -->
   <button class="matrix-button" id="matrixButton" style="display: none;" onclick="showMatrixMode()">🐰 FOLLOW THE WHITE RABBIT</button>
