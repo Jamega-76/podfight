@@ -50,10 +50,10 @@ async function loadBoth() {
     document.getElementById('insertCoinBtn').style.display = 'none';
     document.getElementById('startBtn').style.display = 'inline-block';
 
-    // Show Matrix button after 5 seconds
+    // Show Matrix button after 10 seconds
     setTimeout(() => {
       document.getElementById('matrixButton').style.display = 'inline-block';
-    }, 5000);
+    }, 10000);
 
     renderPodcastCards();
     renderTimeline();
