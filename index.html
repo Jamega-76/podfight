@@ -1305,97 +1305,133 @@
       transform: translateY(0);
     }
 
-    /* CLEAN MODE - Minimal Apple/Podflow Style */
+    /* CLEAN MODE - Modern Minimalist Design */
     body.clean-mode {
-      background: #f8f8fa !important;
-      color: #1c1c1e !important;
+      background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%) !important;
+      color: #2d3748 !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif !important;
     }
 
     body.clean-mode::before {
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.05) 100%), #f8f8fa !important;
+      background: none !important;
     }
 
     body.clean-mode::after {
-      opacity: 0 !important;
+      display: none !important;
     }
 
     body.clean-mode .sprite {
       display: none !important;
     }
 
+    body.clean-mode .arcade-cabinet {
+      display: none !important;
+    }
+
     body.clean-mode .logo-section {
-      margin-bottom: 40px !important;
+      margin-bottom: 20px !important;
+      padding: 30px 20px !important;
     }
 
     body.clean-mode .logo {
-      max-width: 300px !important;
+      max-width: 200px !important;
       filter: none !important;
       animation: none !important;
+      opacity: 0.9 !important;
     }
 
     body.clean-mode .nav-arcade {
-      display: flex !important;
-      background: rgba(255, 255, 255, 0.95) !important;
-      border: 1px solid #e5e5ea !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+      display: none !important;
     }
 
-    body.clean-mode .nav-button {
-      background: #f2f2f7 !important;
-      border-color: #e5e5ea !important;
-      color: #1c1c1e !important;
-      box-shadow: none !important;
+    body.clean-mode .input-wrapper {
+      background: transparent !important;
+      gap: 40px !important;
+      padding: 20px !important;
     }
 
-    body.clean-mode .nav-button:hover {
-      background: #e5e5ea !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
-    }
-
-    body.clean-mode .podcast-card {
-      background: #ffffff !important;
-      border: 1px solid #e5e5ea !important;
-      border-radius: 16px !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-    }
-
-    body.clean-mode .podcast-card:hover {
-      border-color: #d5d5d7 !important;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
-    }
-
-    body.clean-mode .section-title {
-      color: #1c1c1e !important;
+    body.clean-mode .input-label {
+      color: #2d3748 !important;
+      font-weight: 600 !important;
+      font-size: 14px !important;
       text-shadow: none !important;
-      font-size: 18px !important;
-      font-weight: 700 !important;
+    }
+
+    body.clean-mode .input-box {
+      background: #ffffff !important;
+      border: 2px solid #e2e8f0 !important;
+      border-radius: 12px !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+      transition: all 0.3s ease !important;
+    }
+
+    body.clean-mode .input-box input {
+      color: #2d3748 !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI' !important;
+      font-size: 15px !important;
+    }
+
+    body.clean-mode .input-box input::placeholder {
+      color: #a0aec0 !important;
+    }
+
+    body.clean-mode .input-box:focus-within {
+      border-color: #667eea !important;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    }
+
+    body.clean-mode .versus-center {
+      display: none !important;
+    }
+
+    body.clean-mode #urls-ready-msg {
+      color: #48bb78 !important;
+      font-size: 13px !important;
+      text-shadow: none !important;
+      font-weight: 500 !important;
+    }
+
+    body.clean-mode .btn-container {
+      gap: 15px !important;
+      flex-direction: column !important;
+      padding: 20px !important;
     }
 
     body.clean-mode .btn-insert-coin {
-      background: linear-gradient(135deg, #34c759 0%, #30b752 100%) !important;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
       border: none !important;
       color: #fff !important;
-      box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3) !important;
-      border-radius: 10px !important;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+      border-radius: 12px !important;
+      padding: 14px 48px !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI' !important;
+      font-size: 15px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0 !important;
+      cursor: pointer !important;
+      transition: all 0.3s ease !important;
     }
 
     body.clean-mode .btn-insert-coin:hover {
-      box-shadow: 0 6px 16px rgba(52, 199, 89, 0.4) !important;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4) !important;
       transform: translateY(-2px) !important;
     }
 
     body.clean-mode .btn-start {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%) !important;
       border: none !important;
       color: #fff !important;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
-      border-radius: 10px !important;
-      font-family: 'Orbitron', sans-serif !important;
-      font-size: 14px !important;
+      box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3) !important;
+      border-radius: 12px !important;
+      padding: 14px 48px !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI' !important;
+      font-size: 15px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0 !important;
     }
 
     body.clean-mode .btn-start:hover {
-      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4) !important;
+      box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4) !important;
       transform: translateY(-2px) !important;
     }
 
@@ -1403,81 +1439,175 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
       border: none !important;
       color: #fff !important;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
-      border-radius: 10px !important;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+      border-radius: 12px !important;
+      padding: 16px 60px !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI' !important;
+      font-size: 16px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0 !important;
     }
 
     body.clean-mode .btn-fight:hover {
-      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4) !important;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4) !important;
       transform: translateY(-3px) !important;
     }
 
+    body.clean-mode .podcast-card {
+      background: rgba(255, 255, 255, 0.7) !important;
+      border: 1px solid rgba(0, 0, 0, 0.08) !important;
+      border-radius: 16px !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+      padding: 28px !important;
+      backdrop-filter: blur(10px) !important;
+      transition: all 0.3s ease !important;
+    }
+
+    body.clean-mode .podcast-card:hover {
+      border-color: rgba(102, 126, 234, 0.3) !important;
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15) !important;
+      transform: translateY(-4px) !important;
+    }
+
+    body.clean-mode .podcast-cards {
+      gap: 28px !important;
+    }
+
+    body.clean-mode .section-title {
+      color: #2d3748 !important;
+      text-shadow: none !important;
+      font-size: 20px !important;
+      font-weight: 700 !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI' !important;
+      letter-spacing: -0.5px !important;
+      margin-bottom: 24px !important;
+    }
+
+    body.clean-mode .results-section {
+      animation: none !important;
+      margin-left: 20px !important;
+      margin-right: 20px !important;
+      padding: 30px 0 !important;
+    }
+
+    body.clean-mode .heatmap-grid {
+      background: transparent !important;
+    }
+
     body.clean-mode .history-button {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      background: #667eea !important;
       border: none !important;
       color: #fff !important;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
-      border-radius: 8px !important;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2) !important;
+      border-radius: 10px !important;
+      padding: 10px 16px !important;
+      font-size: 12px !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI' !important;
+      font-weight: 600 !important;
+      letter-spacing: 0 !important;
     }
 
     body.clean-mode .history-button:hover {
-      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4) !important;
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3) !important;
+      transform: translateY(-2px) !important;
+    }
+
+    body.clean-mode .clean-view-button {
+      background: #ff9500 !important;
+      border: none !important;
+      box-shadow: 0 4px 12px rgba(255, 149, 0, 0.2) !important;
+      color: #fff !important;
+      border-radius: 10px !important;
+      padding: 10px 16px !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI' !important;
+      font-weight: 600 !important;
+    }
+
+    body.clean-mode .clean-view-button:hover {
+      box-shadow: 0 6px 16px rgba(255, 149, 0, 0.3) !important;
+      transform: translateY(-2px) !important;
     }
 
     body.clean-mode .history-modal {
-      background: #f8f8fa !important;
+      background: #f5f7fa !important;
       border: none !important;
-      box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.05) !important;
+      box-shadow: none !important;
     }
 
     body.clean-mode .history-modal-content {
       background: #ffffff !important;
-      border-radius: 20px !important;
+      border-radius: 24px !important;
       border: none !important;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
     }
 
     body.clean-mode .fight-modal {
-      background: #f8f8fa !important;
+      background: #f5f7fa !important;
       border: none !important;
-      box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.05) !important;
+      box-shadow: none !important;
     }
 
     body.clean-mode .fight-content {
       background: #ffffff !important;
-      border-radius: 20px !important;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
-      padding: 40px !important;
+      border-radius: 24px !important;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+      padding: 50px !important;
+      color: #2d3748 !important;
     }
 
     body.clean-mode .round-title {
-      color: #1c1c1e !important;
+      color: #2d3748 !important;
       text-shadow: none !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI' !important;
+      font-weight: 800 !important;
+      font-size: 32px !important;
+      letter-spacing: -1px !important;
     }
 
     body.clean-mode .fight-action {
       color: #667eea !important;
       text-shadow: none !important;
+      font-size: 18px !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI' !important;
     }
 
     body.clean-mode .battle-image {
-      border-radius: 12px !important;
-      border: 1px solid #e5e5ea !important;
-      background: #f2f2f7 !important;
+      border-radius: 16px !important;
+      border: 2px solid #e2e8f0 !important;
+      background: #f5f7fa !important;
     }
 
     body.clean-mode .matrix-button {
       display: none !important;
     }
 
-    body.clean-mode .clean-view-button {
-      background: linear-gradient(135deg, #ff9500 0%, #ff7a00 100%) !important;
-      border-color: #ff9500 !important;
-      box-shadow: 0 4px 12px rgba(255, 149, 0, 0.3) !important;
+    body.clean-mode .fight-button-container {
+      margin: 40px 20px !important;
     }
 
-    body.clean-mode .clean-view-button:hover {
-      box-shadow: 0 8px 20px rgba(255, 149, 0, 0.4) !important;
+    body.clean-mode .episodes-horizontal-container,
+    body.clean-mode .duration-horizontal-container,
+    body.clean-mode .ten-day-heatmap-container {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
+
+    body.clean-mode .episodes-podcast-column,
+    body.clean-mode .duration-card,
+    body.clean-mode .ten-day-bar-group {
+      background: rgba(255, 255, 255, 0.6) !important;
+      border: 1px solid rgba(0, 0, 0, 0.08) !important;
+      border-radius: 12px !important;
+      backdrop-filter: blur(10px) !important;
+    }
+
+    body.clean-mode .analysis-summary-section,
+    body.clean-mode .ten-day-activity-section,
+    body.clean-mode .timeline-section {
+      padding: 0 !important;
+      margin-bottom: 32px !important;
     }
 
     /* Matrix Mode Styles */
