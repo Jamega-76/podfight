@@ -1624,12 +1624,15 @@ function getLastUniquePodcasts() {
 // Render player thumbnails
 function renderPlayerThumbnails() {
   const container = document.getElementById('playerThumbnails');
+  const section = document.getElementById('selectPlayerSection');
   const podcasts = getLastUniquePodcasts();
 
   if (podcasts.length === 0) {
-    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #666; font-size: 12px;">Aucun podcast utilisé</div>';
+    section.style.display = 'none';
     return;
   }
+
+  section.style.display = 'block';
 
   container.innerHTML = podcasts.map(pod => `
     <div class="player-thumbnail" draggable="true" data-url="${pod.url}" data-title="${pod.title}">

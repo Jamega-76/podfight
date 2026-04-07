@@ -1279,14 +1279,18 @@
     .select-player-section {
       position: fixed;
       top: 70px;
-      right: 20px;
+      right: 10px;
+      left: auto;
       background: rgba(0, 50, 100, 0.3);
       border: 2px solid #ff00ff;
       border-radius: 8px;
       padding: 16px;
       z-index: 98;
-      max-width: 320px;
+      max-width: 280px;
+      width: calc(100% - 20px);
       box-shadow: 0 0 20px #ff00ff;
+      overflow-y: auto;
+      max-height: 200px;
     }
 
     .select-player-title {
