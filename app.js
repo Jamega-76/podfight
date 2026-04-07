@@ -903,32 +903,53 @@ function renderAnalysisSummary(intoModal = false) {
   const pod1 = podcasts[1].title;
   const pod2 = podcasts[2].title;
 
-  let analysis = `<strong>Analyse Comparative sur la Période Observée</strong><br><br>`;
+  // Calculate key metrics for analysis
+  const highVolumePod = freq1 >= freq2 ? { name: pod1, freq: freq1, dur: avgDur1_7d, total: totalHours1_7d }
+                                        : { name: pod2, freq: freq2, dur: avgDur2_7d, total: totalHours2_7d };
+  const lowVolumePod = freq1 < freq2 ? { name: pod1, freq: freq1, dur: avgDur1_7d, total: totalHours1_7d }
+                                      : { name: pod2, freq: freq2, dur: avgDur2_7d, total: totalHours2_7d };
 
-  // Section 1: Frequency Analysis
-  analysis += `${eps1_7d.length > eps2_7d.length ? `<span class="analysis-highlight">${pod1}</span>` : `<span class="analysis-highlight">${pod2}</span>`} présente une activité de publication plus soutenue, avec une moyenne de <strong>${Math.max(freq1, freq2)}</strong> épisode${Math.max(freq1, freq2) > 1.5 ? 's' : ''} par jour, contre <strong>${Math.min(freq1, freq2)}</strong> épisode${Math.min(freq1, freq2) > 1 ? 's' : ''} quotidien${Math.min(freq1, freq2) > 1 ? 's' : ''} pour l'autre. Cette fréquence ${eps1_7d.length > eps2_7d.length ? 'plus élevée de ' + pod1 + ' traduit' : 'moins élevée de ' + pod1 + ' traduit'} une stratégie de présence ${eps1_7d.length > eps2_7d.length ? 'renforcée' : 'plus ciblée'} dans les flux d'écoute.<br><br>`;
+  const longFormatPod = avgDur1_7d > avgDur2_7d ? pod1 : pod2;
+  const shortFormatPod = avgDur1_7d <= avgDur2_7d ? pod1 : pod2;
+  const durationRatio = Math.round((Math.max(avgDur1_7d, avgDur2_7d) / Math.min(avgDur1_7d, avgDur2_7d)) * 100) / 100;
 
-  // Section 2: Duration Analysis
-  if (avgDur1_7d !== avgDur2_7d) {
-    const longerPod = avgDur1_7d > avgDur2_7d ? pod1 : pod2;
-    const longerDur = Math.max(avgDur1_7d, avgDur2_7d);
-    const shorterDur = Math.min(avgDur1_7d, avgDur2_7d);
-    analysis += `En revanche, <span class="analysis-highlight">${longerPod}</span> se distingue par des formats plus longs, avec une durée moyenne d'environ <strong>${longerDur} minutes</strong> par épisode, soit ${Math.round((longerDur / shorterDur) * 10) / 10}x celle de l'autre (<strong>${shorterDur} minutes</strong>). Cela suggère un positionnement éditorial davantage orienté vers des contenus approfondis, là où l'autre privilégie des formats ${shorterDur < 15 ? 'courts et plus digestes' : 'modérés'}.<br><br>`;
-  }
+  const isHighVolumeIntensive = highVolumePod.freq >= 3;
+  const isLowVolumeDeep = lowVolumePod.dur >= 25;
+  const isBalancedEcosystem = Math.abs(highVolumePod.total - lowVolumePod.total) < 5;
 
-  // Section 3: 7-Day Rhythm
-  analysis += `<strong>Rythme de Publication (7 Derniers Jours)</strong><br>`;
-  analysis += `${eps1_7d.length >= eps2_7d.length ? pod1 : pod2} maintient une cadence ${eps1_7d.length >= eps2_7d.length ? 'élevée et régulière' : 'plus modérée'}, favorisant la récurrence d'exposition. ${eps1_7d.length < eps2_7d.length ? pod1 : pod2} adopte un rythme ${eps1_7d.length < eps2_7d.length ? 'plus modéré' : 'soutenu'}, ${totalHours1_7d !== totalHours2_7d ? 'compensé par une durée d\'écoute cumulée ' + (totalHours1_7d > totalHours2_7d ? 'supérieure' : 'équivalente') : 'avec une durée d\'écoute comparable'}.<br><br>`;
+  let analysis = `<div class="comparative-analysis" style="color: #00ff88; line-height: 1.8; text-align: left;">
+    <div style="color: #ffff00; font-weight: 700; font-size: 1.05em; margin-bottom: 18px;">Analyse Comparative des Dynamiques Éditoriales</div>
 
-  // Section 4: Summary
-  analysis += `<strong>Synthèse Positionnement</strong><br>`;
-  if (eps1_7d.length > eps2_7d.length) {
-    analysis += `<span class="analysis-highlight">${pod1}</span> = volume élevé, régularité, formats ${avgDur1_7d < 15 ? 'courts' : avgDur1_7d < 25 ? 'modérés' : 'longs'}<br>`;
-    analysis += `<span class="analysis-highlight">${pod2}</span> = densité, formats ${avgDur2_7d > 20 ? 'longs' : 'modérés'}, approche éditoriale ${avgDur2_7d > 20 ? 'approfondie' : 'équilibrée'}`;
-  } else {
-    analysis += `<span class="analysis-highlight">${pod2}</span> = volume élevé, régularité, formats ${avgDur2_7d < 15 ? 'courts' : avgDur2_7d < 25 ? 'modérés' : 'longs'}<br>`;
-    analysis += `<span class="analysis-highlight">${pod1}</span> = densité, formats ${avgDur1_7d > 20 ? 'longs' : 'modérés'}, approche éditoriale ${avgDur1_7d > 20 ? 'approfondie' : 'équilibrée'}`;
-  }
+    <div style="margin-bottom: 18px;">
+      Sur la période observée, <span style="color: #ff00ff; font-weight: 700;">${highVolumePod.name}</span> s'inscrit dans une logique de présence continue, avec une moyenne de <strong>${highVolumePod.freq} épisodes</strong> publiés par jour, contre <strong>${lowVolumePod.freq} épisodes</strong> pour <span style="color: #ffd709; font-weight: 700;">${lowVolumePod.name}</span>. Cet écart ne traduit pas seulement une différence de volume, mais deux approches distinctes : là où <span style="color: #ff00ff; font-weight: 700;">${highVolumePod.name}</span> cherche à occuper l'espace de manière régulière, <span style="color: #ffd709; font-weight: 700;">${lowVolumePod.name}</span> opte pour une prise de parole ${isLowVolumeDeep ? 'plus sélective et approfondie' : 'plus ciblée'}.
+    </div>
+
+    <div style="margin-bottom: 18px;">
+      Cette différence est directement compensée par le format des contenus. <span style="color: #ff00ff; font-weight: 700;">${longFormatPod}</span> propose des épisodes sensiblement plus longs, avec une durée moyenne de <strong>${Math.max(avgDur1_7d, avgDur2_7d)} minutes</strong>, contre <strong>${Math.min(avgDur1_7d, avgDur2_7d)} minutes</strong> pour <span style="color: #ffd709; font-weight: 700;">${shortFormatPod}</span>. On n'est donc pas sur une moindre production, mais sur une densité éditoriale ${isLowVolumeDeep ? 'plus forte par épisode, qui privilégie l\'approfondissement plutôt que la répétition' : 'différenciée selon les stratégies'}.
+    </div>
+
+    <div style="color: #ffaa00; font-weight: 700; margin-bottom: 10px;">Sur les 7 derniers jours, cette opposition se confirme dans le rythme de diffusion.</div>
+    <div style="margin-bottom: 18px;">
+      <span style="color: #ff00ff; font-weight: 700;">${highVolumePod.name}</span> ${isHighVolumeIntensive ? 'maintient une cadence élevée et homogène, assurant une forte visibilité dans les flux' : 'conserve un rythme stable et structuré'}. À l'inverse, <span style="color: #ffd709; font-weight: 700;">${lowVolumePod.name}</span> ${isLowVolumeDeep ? 'conserve un rythme plus espacé, mais qui reste cohérent avec la longueur de ses formats et son positionnement plus éditorialisé' : 'propose une cadence mesurée'}. ${isBalancedEcosystem ? 'En volume d\'écoute potentiel, l\'écart entre les deux tend ainsi à se réduire.' : 'Les deux approches créent des expériences d\'écoute distinctes.'}
+    </div>
+
+    <div style="color: #ffaa00; font-weight: 700; margin-bottom: 10px;">Lecture globale :</div>
+    <div style="margin-bottom: 18px;">
+      On observe moins une opposition qu'un équilibre entre deux stratégies complémentaires :<br>
+      <br>
+      • <span style="color: #ff00ff; font-weight: 700;">${highVolumePod.name}</span> maximise la fréquence pour capter l'attention de manière répétée<br>
+      • <span style="color: #ffd709; font-weight: 700;">${lowVolumePod.name}</span> mise sur la profondeur pour installer une écoute plus engagée
+    </div>
+
+    <div style="color: #ffaa00; font-weight: 700; margin-bottom: 10px; border-top: 1px solid #00ffff; padding-top: 12px;">En synthèse :</div>
+    <div style="margin-left: 16px;">
+      <div style="color: #ff00ff; font-weight: 700; margin-bottom: 8px;">${highVolumePod.name}</div>
+      <div style="color: #00ff88; font-size: 0.95em; margin-bottom: 12px;">intensité, régularité, présence forte dans les flux</div>
+
+      <div style="color: #ffd709; font-weight: 700; margin-bottom: 8px;">${lowVolumePod.name}</div>
+      <div style="color: #00ff88; font-size: 0.95em;">sélectivité, formats ${isLowVolumeDeep ? 'longs' : 'structurés'}, valeur éditoriale renforcée</div>
+    </div>
+  </div>`;
 
   let html = `<div class="analysis-text">${analysis}</div>`;
 
