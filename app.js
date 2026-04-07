@@ -1575,3 +1575,126 @@ function playSoundEffect(type = 'hit') {
     console.log('Sound effect skipped:', e.message);
   }
 }
+
+// SELECT YOUR PLAYER - Drag & Drop Recent Podcasts
+function getLastUniquePodcasts() {
+  const battles = getBattleHistory();
+  const podcastMap = new Map();
+
+  // Iterate in reverse to get most recent first
+  for (let i = battles.length - 1; i >= 0; i--) {
+    const battle = battles[i];
+
+    // Add podcast 1
+    if (!podcastMap.has(battle.url1)) {
+      podcastMap.set(battle.url1, {
+        title: battle.title1,
+        image: battle.image1,
+        url: battle.url1
+      });
+    }
+
+    // Add podcast 2
+    if (!podcastMap.has(battle.url2)) {
+      podcastMap.set(battle.url2, {
+        title: battle.title2,
+        image: battle.image2,
+        url: battle.url2
+      });
+    }
+
+    // Stop when we have 6
+    if (podcastMap.size >= 6) break;
+  }
+
+  return Array.from(podcastMap.values()).slice(0, 6);
+}
+
+// Render player thumbnails
+function renderPlayerThumbnails() {
+  const container = document.getElementById('playerThumbnails');
+  const podcasts = getLastUniquePodcasts();
+
+  if (podcasts.length === 0) {
+    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #666; font-size: 12px;">Aucun podcast utilisé</div>';
+    return;
+  }
+
+  container.innerHTML = podcasts.map(pod => `
+    <div class="player-thumbnail" draggable="true" data-url="${pod.url}" data-title="${pod.title}">
+      ${pod.image ? `<img src="${pod.image}" alt="${pod.title}">` : '📻'}
+      <div class="player-thumbnail-tooltip">${pod.title.substring(0, 15)}</div>
+    </div>
+  `).join('');
+
+  // Add drag event listeners
+  container.querySelectorAll('.player-thumbnail').forEach(thumb => {
+    thumb.addEventListener('dragstart', (e) => {
+      e.dataTransfer.effectAllowed = 'copy';
+      e.dataTransfer.setData('text/plain', thumb.dataset.url);
+      e.dataTransfer.setData('podcast-url', thumb.dataset.url);
+    });
+
+    thumb.addEventListener('dragend', () => {
+      document.querySelectorAll('.input-box').forEach(box => box.classList.remove('drag-over'));
+    });
+  });
+
+  // Add drop zone listeners to input boxes
+  const rss1Box = document.getElementById('rss-1')?.parentElement;
+  const rss2Box = document.getElementById('rss-2')?.parentElement;
+
+  [rss1Box, rss2Box].forEach(box => {
+    if (!box) return;
+
+    box.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      box.classList.add('drag-over');
+    });
+
+    box.addEventListener('dragleave', () => {
+      box.classList.remove('drag-over');
+    });
+
+    box.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const url = e.dataTransfer.getData('podcast-url');
+      const input = box.querySelector('input');
+
+      if (input && url) {
+        input.value = url;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        checkUrlsReady();
+      }
+
+      box.classList.remove('drag-over');
+    });
+  });
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const rss1 = document.getElementById('rss-1');
+  const rss2 = document.getElementById('rss-2');
+
+  if (rss1) rss1.addEventListener('input', checkUrlsReady);
+  if (rss2) rss2.addEventListener('input', checkUrlsReady);
+
+  // Load clean mode preference from localStorage
+  if (localStorage.getItem('cleanMode') === 'true') {
+    toggleCleanMode();
+  }
+
+  // Render player thumbnails
+  renderPlayerThumbnails();
+
+  // Re-render thumbnails after each battle
+  const originalStartFight = window.startFight;
+  window.startFight = function() {
+    setTimeout(() => {
+      renderPlayerThumbnails();
+    }, 6000); // After fight completes
+    return originalStartFight.apply(this, arguments);
+  };
+});
