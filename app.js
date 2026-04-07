@@ -484,26 +484,35 @@ function runFightAnimation() {
 
   // ROUND 1 (0-2s)
   setTimeout(() => {
+    playSoundEffect('round'); // Round start sound
     let html = `<div class="round-title">⚔️ ROUND 1</div>`;
     for (let i = 0; i < 2; i++) {
       const action = actions[Math.floor(Math.random() * actions.length)];
       html += `<div class="fight-action" style="animation-delay: ${i * 0.4}s;">${action}</div>`;
+      // Play hit sound for each action
+      setTimeout(() => playSoundEffect('hit'), i * 400 + 100);
     }
     content.innerHTML = html;
   }, 0);
 
   // ROUND 2 (2-4s)
   setTimeout(() => {
+    playSoundEffect('round'); // Round start sound
     let html = `<div class="round-title">⚔️ ROUND 2</div>`;
     for (let i = 0; i < 2; i++) {
       const action = actions[Math.floor(Math.random() * actions.length)];
       html += `<div class="fight-action" style="animation-delay: ${i * 0.4}s;">${action}</div>`;
+      // Play hit sound for each action
+      setTimeout(() => playSoundEffect('hit'), i * 400 + 100);
     }
     content.innerHTML = html;
   }, 2000);
 
   // RÉSULTAT (4-8s+)
   setTimeout(() => {
+    playSoundEffect('explosion'); // Explosion sound for dramatic effect
+    setTimeout(() => playSoundEffect('victory'), 300); // Victory fanfare
+
     const winnerPodcast = podcasts[winner];
 
     let html = `
@@ -1423,4 +1432,152 @@ function showRecommendations() {
 function closeRecommendations() {
   const modal = document.getElementById('recommendationsModal');
   modal.style.display = 'none';
+}
+
+// FIGHT SOUND EFFECTS - Street Fighter II Style! 🎮
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+function playSoundEffect(type = 'hit') {
+  try {
+    const now = audioContext.currentTime;
+
+    if (type === 'hit') {
+      // Punch/Kick sound - deep bass impact
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      osc.connect(gain);
+      gain.connect(audioContext.destination);
+
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+
+      osc.start(now);
+      osc.stop(now + 0.1);
+
+      // Add higher frequency for "punch" texture
+      const osc2 = audioContext.createOscillator();
+      const gain2 = audioContext.createGain();
+      osc2.connect(gain2);
+      gain2.connect(audioContext.destination);
+
+      osc2.frequency.setValueAtTime(300, now);
+      osc2.frequency.exponentialRampToValueAtTime(100, now + 0.08);
+      gain2.gain.setValueAtTime(0.2, now);
+      gain2.gain.exponentialRampToValueAtTime(0, now + 0.08);
+
+      osc2.start(now);
+      osc2.stop(now + 0.08);
+    }
+
+    if (type === 'explosion') {
+      // Explosion sound - random noise burst
+      const bufferSize = audioContext.sampleRate * 0.5;
+      const noiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+
+      const source = audioContext.createBufferSource();
+      source.buffer = noiseBuffer;
+
+      const gain = audioContext.createGain();
+      const filter = audioContext.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(150, now);
+      filter.frequency.exponentialRampToValueAtTime(50, now + 0.5);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioContext.destination);
+
+      gain.gain.setValueAtTime(0.4, now);
+      gain.gain.exponentialRampToValueAtTime(0, now + 0.5);
+
+      source.start(now);
+      source.stop(now + 0.5);
+
+      // Add bass rumble
+      const bass = audioContext.createOscillator();
+      const bassGain = audioContext.createGain();
+      bass.connect(bassGain);
+      bassGain.connect(audioContext.destination);
+
+      bass.frequency.setValueAtTime(80, now);
+      bass.frequency.exponentialRampToValueAtTime(20, now + 0.4);
+      bassGain.gain.setValueAtTime(0.3, now);
+      bassGain.gain.exponentialRampToValueAtTime(0, now + 0.4);
+
+      bass.start(now);
+      bass.stop(now + 0.4);
+    }
+
+    if (type === 'victory') {
+      // Victory fanfare - ascending tones
+      const notes = [262, 330, 392, 523]; // C, E, G, C (major chord)
+      notes.forEach((freq, idx) => {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+
+        const startTime = now + (idx * 0.15);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.2, startTime);
+        gain.gain.exponentialRampToValueAtTime(0, startTime + 0.3);
+
+        osc.start(startTime);
+        osc.stop(startTime + 0.3);
+      });
+    }
+
+    if (type === 'round') {
+      // Round start sound - dramatic cymbal crash simulation
+      const bufferSize = audioContext.sampleRate * 0.3;
+      const crashBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+      const output = crashBuffer.getChannelData(0);
+
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.1));
+      }
+
+      const source = audioContext.createBufferSource();
+      source.buffer = crashBuffer;
+
+      const gain = audioContext.createGain();
+      const filter = audioContext.createBiquadFilter();
+      filter.type = 'highpass';
+      filter.frequency.setValueAtTime(5000, now);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioContext.destination);
+
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0, now + 0.3);
+
+      source.start(now);
+      source.stop(now + 0.3);
+    }
+
+    if (type === 'tick') {
+      // Quick tick sound for animations
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      osc.connect(gain);
+      gain.connect(audioContext.destination);
+
+      osc.frequency.setValueAtTime(800, now);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0, now + 0.05);
+
+      osc.start(now);
+      osc.stop(now + 0.05);
+    }
+  } catch (e) {
+    console.log('Sound effect skipped:', e.message);
+  }
 }
