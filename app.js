@@ -969,12 +969,6 @@ function renderAnalysisSummary(intoModal = false) {
     document.getElementById('analysis-text').innerHTML = html;
     const section = document.getElementById('analysis-summary-section');
     section.style.display = 'block';
-
-    // Show action buttons
-    const actionsDiv = document.getElementById('analysis-actions');
-    if (actionsDiv) {
-      actionsDiv.style.display = 'block';
-    }
   }
 }
 

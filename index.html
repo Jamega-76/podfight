@@ -2031,16 +2031,6 @@
         <div class="section-title">🎯 Analyse Comparative</div>
         <div class="analysis-text" id="analysis-text"></div>
 
-        <!-- Action Buttons -->
-        <div id="analysis-actions" style="display: none; margin-top: 32px; padding: 24px; background: rgba(0, 100, 200, 0.2); border: 2px solid #00ffff; border-radius: 4px; text-align: center;">
-          <div style="color: #ffff00; font-weight: 700; margin-bottom: 16px; font-size: 1.1em;">💡 Actions</div>
-          <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-            <button onclick="showRecommendations()" style="padding: 12px 24px; background: linear-gradient(135deg, #ff8800 0%, #ff6600 100%); border: 2px solid #ff8800; color: #fff; font-weight: 700; cursor: pointer; border-radius: 4px; font-family: 'Orbitron', sans-serif; text-transform: uppercase; font-size: 12px; box-shadow: 0 0 15px #ff8800; transition: all 0.3s;">🎯 Recommandations</button>
-            <button onclick="exportAnalysisImage()" style="padding: 12px 24px; background: linear-gradient(135deg, #00dd77 0%, #00bb55 100%); border: 2px solid #00dd77; color: #000; font-weight: 700; cursor: pointer; border-radius: 4px; font-family: 'Orbitron', sans-serif; text-transform: uppercase; font-size: 12px; box-shadow: 0 0 15px #00dd77; transition: all 0.3s;">📥 Exporter</button>
-            <button onclick="shareAnalysis()" style="padding: 12px 24px; background: linear-gradient(135deg, #ff00ff 0%, #ff0088 100%); border: 2px solid #ff00ff; color: #fff; font-weight: 700; cursor: pointer; border-radius: 4px; font-family: 'Orbitron', sans-serif; text-transform: uppercase; font-size: 12px; box-shadow: 0 0 15px #ff00ff; transition: all 0.3s;">📤 Partager</button>
-          </div>
-        </div>
-
         <!-- Recommendations Modal -->
         <div id="recommendationsModal" style="display: none; position: fixed; inset: 0; background: #0a0e27; z-index: 1003; animation: fadeIn 0.3s ease-in; border: 4px solid #ff8800; box-shadow: inset 0 0 60px rgba(255, 136, 0, 0.3); overflow-y: auto;">
           <button onclick="closeRecommendations()" style="position: fixed; top: 20px; right: 20px; background: #ff8800; color: #000; border: none; padding: 12px 20px; font-weight: bold; cursor: pointer; border-radius: 4px; z-index: 1004; font-family: 'Orbitron', sans-serif;">FERMER</button>
@@ -2052,6 +2042,11 @@
             <div id="recommendations-content" style="display: grid; gap: 20px;"></div>
           </div>
         </div>
+      </div>
+
+      <!-- Bottom Fight Button -->
+      <div style="text-align: center; margin-top: 80px; margin-bottom: 40px;">
+        <button class="btn-fight" onclick="startFight()" style="padding: 18px 70px; font-size: 16px;">🥊 FIGHT</button>
       </div>
     </div>
 

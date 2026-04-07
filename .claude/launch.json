@@ -2,11 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "podfight",
+      "name": "podator",
       "runtimeExecutable": "bash",
-      "runtimeArgs": ["start-server.sh"],
-      "port": 8000,
-      "autoPort": true
+      "runtimeArgs": ["-c", "python3 -m http.server $PORT"],
+      "port": 9999
     }
   ]
 }
