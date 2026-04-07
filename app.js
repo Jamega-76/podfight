@@ -674,8 +674,8 @@ function generate10DayAnalysis(dates, dayCounts1, dayCounts2, pod1, pod2) {
     'weekend': { avg1: weekendAvg1, avg2: weekendAvg2, name: 'week-end' }
   };
 
-  const peakDay1 = Object.entries(allAvgs).reduce((max, [key, val]) => val.avg1 > allAvgs[max].avg1 ? key : max);
-  const peakDay2 = Object.entries(allAvgs).reduce((max, [key, val]) => val.avg2 > allAvgs[max].avg2 ? key : max);
+  const peakDay1 = Object.entries(allAvgs).reduce((max, [key, val]) => val.avg1 > allAvgs[max].avg1 ? key : max, 'monTue');
+  const peakDay2 = Object.entries(allAvgs).reduce((max, [key, val]) => val.avg2 > allAvgs[max].avg2 ? key : max, 'monTue');
   const peakDayName = allAvgs[peakDay1].name;
 
   // Determine postures
