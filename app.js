@@ -627,26 +627,36 @@ function renderAvgDurationToday() {
 }
 
 // New Card: 10-Day Activity Heatmap
-// Generate 10-day activity analysis
+// Generate 10-day activity analysis with narrative structure
 function generate10DayAnalysis(dates, dayCounts1, dayCounts2, pod1, pod2) {
   // Analyze by day of week
-  const dayPatterns = { 0: { name: 'Dim', c1: [], c2: [] }, 1: { name: 'Lun', c1: [], c2: [] }, 2: { name: 'Mar', c1: [], c2: [] }, 3: { name: 'Mer', c1: [], c2: [] }, 4: { name: 'Jeu', c1: [], c2: [] }, 5: { name: 'Ven', c1: [], c2: [] }, 6: { name: 'Sam', c1: [], c2: [] } };
+  const dayPatterns = {
+    0: { name: 'Dim', c1: [], c2: [] },
+    1: { name: 'Lun', c1: [], c2: [] },
+    2: { name: 'Mar', c1: [], c2: [] },
+    3: { name: 'Mer', c1: [], c2: [] },
+    4: { name: 'Jeu', c1: [], c2: [] },
+    5: { name: 'Ven', c1: [], c2: [] },
+    6: { name: 'Sam', c1: [], c2: [] }
+  };
 
   dates.forEach(date => {
     const dateStr = date.toLocaleDateString('fr-FR', { month: '2-digit', day: '2-digit' });
     const dayOfWeek = date.getDay();
-    dayPatterns[dayOfWeek].c1.push(dayCounts1[dateStr]);
-    dayPatterns[dayOfWeek].c2.push(dayCounts2[dateStr]);
+    dayPatterns[dayOfWeek].c1.push(dayCounts1[dateStr] || 0);
+    dayPatterns[dayOfWeek].c2.push(dayCounts2[dateStr] || 0);
   });
 
-  // Calculate averages for each day
+  // Calculate averages and totals for each day
   Object.keys(dayPatterns).forEach(day => {
     const pattern = dayPatterns[day];
-    pattern.avg1 = pattern.c1.length > 0 ? (pattern.c1.reduce((a, b) => a + b) / pattern.c1.length) : 0;
-    pattern.avg2 = pattern.c2.length > 0 ? (pattern.c2.reduce((a, b) => a + b) / pattern.c2.length) : 0;
+    pattern.avg1 = pattern.c1.length > 0 ? pattern.c1.reduce((a, b) => a + b) / pattern.c1.length : 0;
+    pattern.avg2 = pattern.c2.length > 0 ? pattern.c2.reduce((a, b) => a + b) / pattern.c2.length : 0;
+    pattern.max1 = pattern.c1.length > 0 ? Math.max(...pattern.c1) : 0;
+    pattern.max2 = pattern.c2.length > 0 ? Math.max(...pattern.c2) : 0;
   });
 
-  // Identify patterns
+  // Analyze patterns by period
   const monTueAvg1 = (dayPatterns[1].avg1 + dayPatterns[2].avg1) / 2;
   const monTueAvg2 = (dayPatterns[1].avg2 + dayPatterns[2].avg2) / 2;
   const wedThuAvg1 = (dayPatterns[3].avg1 + dayPatterns[4].avg1) / 2;
@@ -656,32 +666,68 @@ function generate10DayAnalysis(dates, dayCounts1, dayCounts2, pod1, pod2) {
   const weekendAvg1 = (dayPatterns[6].avg1 + dayPatterns[0].avg1) / 2;
   const weekendAvg2 = (dayPatterns[6].avg2 + dayPatterns[0].avg2) / 2;
 
-  const maxAvg1 = Math.max(monTueAvg1, wedThuAvg1, friAvg1, weekendAvg1);
-  const maxAvg2 = Math.max(monTueAvg2, wedThuAvg2, friAvg2, weekendAvg2);
+  // Find the actual peak day
+  const allAvgs = {
+    'monTue': { avg1: monTueAvg1, avg2: monTueAvg2, name: 'lundi-mardi' },
+    'wedThu': { avg1: wedThuAvg1, avg2: wedThuAvg2, name: 'mercredi-jeudi' },
+    'fri': { avg1: friAvg1, avg2: friAvg2, name: 'vendredi' },
+    'weekend': { avg1: weekendAvg1, avg2: weekendAvg2, name: 'week-end' }
+  };
 
-  const isHighWeekend1 = weekendAvg1 > maxAvg1 * 0.6;
-  const isHighWeekend2 = weekendAvg2 > maxAvg2 * 0.6;
+  const peakDay1 = Object.entries(allAvgs).reduce((max, [key, val]) => val.avg1 > allAvgs[max].avg1 ? key : max);
+  const peakDay2 = Object.entries(allAvgs).reduce((max, [key, val]) => val.avg2 > allAvgs[max].avg2 ? key : max);
+  const peakDayName = allAvgs[peakDay1].name;
+
+  // Determine postures
+  const isIntensive1 = monTueAvg1 > wedThuAvg1; // High at start
+  const isLinear2 = Math.abs(monTueAvg2 - wedThuAvg2) < 1; // Stable
+
+  // Check if Friday is significant
+  const isFridayPeak = friAvg1 > monTueAvg1 * 0.8 || friAvg2 > monTueAvg2 * 0.8;
+
+  // Check weekend strength
+  const weekendStrength1 = weekendAvg1 > (monTueAvg1 + wedThuAvg1) * 0.4;
+  const weekendStrength2 = weekendAvg2 > (monTueAvg2 + wedThuAvg2) * 0.4;
 
   let analysis = `<div class="ten-day-analysis" style="margin-top: 32px; padding: 24px; background: rgba(0, 50, 100, 0.3); border: 2px solid #00ffff; border-radius: 4px; color: #00ff88; font-size: 0.95em; line-height: 1.8; text-align: left;">
-    <div style="color: #ffff00; font-weight: 700; font-size: 1.05em; margin-bottom: 16px;">📊 Analyse de l'Activité</div>
+    <div style="color: #ffff00; font-weight: 700; font-size: 1.05em; margin-bottom: 20px;">📊 Lecture des dynamiques de publication sur 10 jours</div>
 
-    <div style="color: #00ff88; margin-bottom: 14px;">
-      L'observation de l'activité sur 10 jours met en évidence une concentration des publications en ${friAvg1 > 0 || friAvg2 > 0 ? 'début et fin de semaine' : 'certains jours stratégiques'}, avec un pic ${friAvg1 > monTueAvg1 && friAvg2 > monTueAvg2 ? 'très marqué le vendredi' : 'identifié'} pour les deux podcasts.
+    <div style="color: #00ff88; margin-bottom: 18px; font-style: italic;">
+      La répartition des publications ne doit pas être lue comme une simple opposition "jours forts / jours faibles", mais comme une logique éditoriale structurée autour de trois temps clés dans la semaine.
     </div>
 
-    <div style="color: #ffaa00; font-weight: 700; margin-bottom: 10px;">Le vendredi apparaît comme le jour stratégique principal :</div>
-
-    <div style="margin-left: 16px; margin-bottom: 14px; color: #00ff88;">
-      • <span class="analysis-highlight" style="color: #ff00ff; font-weight: 700;">${pod1}</span> atteint un maximum de ${Math.round(friAvg1)} épisode${Math.round(friAvg1) > 1 ? 's' : ''}<br>
-      • <span class="analysis-highlight" style="color: #ffd709; font-weight: 700;">${pod2}</span> y publie également son volume le plus élevé (${Math.round(friAvg2)} épisode${Math.round(friAvg2) > 1 ? 's' : ''})
+    <div style="color: #ffaa00; font-weight: 700; margin-bottom: 10px;">◆ Le ${isFridayPeak ? 'vendredi est le point de convergence' : 'rythme éditorial se structure'} des deux stratégies</div>
+    <div style="margin-left: 16px; margin-bottom: 18px; color: #00ff88;">
+      ${isFridayPeak ? `Le vendredi concentre le volume maximal : ${Math.round(friAvg1)} épisodes pour <span style="color: #ff00ff; font-weight: 700;">${pod1}</span>, ${Math.round(friAvg2)} pour <span style="color: #ffd709; font-weight: 700;">${pod2}</span>. Cela traduit une volonté de capter une audience plus disponible à l'approche du week-end.` : `${allAvgs[peakDay1].name} concentre l'activité maximale pour <span style="color: #ff00ff; font-weight: 700;">${pod1}</span>, tandis que <span style="color: #ffd709; font-weight: 700;">${pod2}</span> atteint son pic ${allAvgs[peakDay2].name}.`}
     </div>
 
-    <div style="color: #00ff88; margin-bottom: 14px;">
-      En complément, le début de semaine (lundi et mardi) constitue un second temps fort, particulièrement pour <span style="color: #ff00ff; font-weight: 700;">${pod1}</span>, avec des volumes élevés (jusqu'à ${Math.round(Math.max(...dayPatterns[1].c1, ...dayPatterns[2].c1))} épisodes par jour), tandis que <span style="color: #ffd709; font-weight: 700;">${pod2}</span> reste stable autour de ${Math.round(monTueAvg2)} épisodes.
+    <div style="color: #ffaa00; font-weight: 700; margin-bottom: 10px;">◆ En amont, le début de semaine (lundi–mardi) joue un rôle d'installation</div>
+    <div style="margin-left: 16px; margin-bottom: 18px; color: #00ff88;">
+      ${isIntensive1 ? `<span style="color: #ff00ff; font-weight: 700;">${pod1}</span> y déploie des volumes élevés (${Math.round(monTueAvg1)} en moyenne), proches de ses pics, ce qui montre une stratégie offensive et continue.` : `<span style="color: #ff00ff; font-weight: 700;">${pod1}</span> établit un rythme de ${Math.round(monTueAvg1)} épisodes en moyenne.`}
+      <br>${isLinear2 ? `<span style="color: #ffd709; font-weight: 700;">${pod2}</span> adopte une approche linéaire, avec un volume stable autour de ${Math.round(monTueAvg2)} épisodes, sans montée en puissance marquée.` : `<span style="color: #ffd709; font-weight: 700;">${pod2}</span> y monte progressivement à ${Math.round(monTueAvg2)} épisodes.`}
     </div>
 
-    <div style="color: #00ff88; margin-bottom: 14px;">
-      À l'inverse, le milieu de semaine (mercredi/jeudi) montre un léger ralentissement ${wedThuAvg1 < monTueAvg1 || wedThuAvg2 < monTueAvg2 ? '(baisse confirmée)' : ''}, avant une reprise nette le vendredi. Le week-end est ${isHighWeekend1 || isHighWeekend2 ? 'également actif' : 'plus calme'}, avec des volumes ${isHighWeekend1 || isHighWeekend2 ? 'significatifs et réguliers' : 'modérés et réguliers'} pour les deux podcasts.
+    <div style="color: #ffaa00; font-weight: 700; margin-bottom: 10px;">◆ Le milieu de semaine (mercredi–jeudi) correspond à un temps de respiration</div>
+    <div style="margin-left: 16px; margin-bottom: 18px; color: #00ff88;">
+      ${wedThuAvg1 < monTueAvg1 || wedThuAvg2 < monTueAvg2 ? 'Une baisse observable sur les deux podcasts traduit un ajustement du rythme,' : 'Un équilibre se maintient,'} avant ${isFridayPeak ? 'la montée en charge du vendredi.' : 'l\'ajustement final de la semaine.'}
+      <span style="color: #ff00ff; font-weight: 700;">${pod1}</span> passe à ${Math.round(wedThuAvg1)} épisodes et <span style="color: #ffd709; font-weight: 700;">${pod2}</span> à ${Math.round(wedThuAvg2)}.
+    </div>
+
+    <div style="color: #ffaa00; font-weight: 700; margin-bottom: 10px;">◆ Enfin, le week-end ${weekendStrength1 || weekendStrength2 ? 'prolonge la stratégie' : 'apaise le rythme'}</div>
+    <div style="margin-left: 16px; margin-bottom: 18px; color: #00ff88;">
+      ${weekendStrength1 || weekendStrength2 ? 'Le week-end ne constitue pas un creux, mais un prolongement maîtrisé, avec des volumes modérés mais réguliers (${Math.round(weekendAvg1)} et ${Math.round(weekendAvg2)} épisodes), permettant de maintenir la présence sans saturer l\'audience.' : 'Le week-end connaît une activité modérée (${Math.round(weekendAvg1)} et ${Math.round(weekendAvg2)} épisodes), consolidant la présence des deux podcasts.'}
+    </div>
+
+    <div style="color: #ffaa00; font-weight: 700; margin-bottom: 10px; margin-top: 20px;">Ce que cela révèle :</div>
+    <div style="margin-left: 16px; color: #00ff88;">
+      • Une logique de pic ${isFridayPeak ? 'assumée le vendredi' : 'structurée autour de ' + allAvgs[peakDay1].name}, commune aux deux acteurs<br>
+      • Une différence de posture en début de semaine : ${isIntensive1 ? 'intensité' : 'progression'} pour <span style="color: #ff00ff; font-weight: 700;">${pod1}</span> vs régularité pour <span style="color: #ffd709; font-weight: 700;">${pod2}</span><br>
+      • Une gestion du rythme hebdomadaire pensée comme un cycle, et non comme une simple accumulation
+    </div>
+
+    <div style="color: #ffaa00; font-weight: 700; margin-top: 20px; margin-bottom: 10px; border-top: 1px solid #00ffff; padding-top: 16px;">En synthèse :</div>
+    <div style="margin-left: 16px; color: #00ff88; font-style: italic;">
+      ${isFridayPeak ? 'Le vendredi n\'est pas seulement le jour le plus actif, c\'est le point d\'orgue d\'une stratégie hebdomadaire structurée, appuyée par une montée en puissance progressive et un maintien de présence sur le week-end.' : 'Les deux podcasts organisent leur publication autour d\'une architecture hebdomadaire claire, révélant des stratégies distinctes mais complémentaires pour capter leur audience.'}
     </div>
   </div>`;
 
