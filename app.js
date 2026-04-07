@@ -14,6 +14,19 @@ function checkShowKonamiButton() {
   }
 }
 
+// Check if Matrix button (Konami code) should be shown
+function checkShowMatrixButton() {
+  const now = Date.now();
+  const elapsedTime = now - pageLoadTime;
+
+  if (podcasts[1] && podcasts[2] && elapsedTime >= MIN_LOAD_TIME) {
+    document.getElementById('matrixButton').style.display = 'inline-block';
+  } else {
+    // Check again after 1 second if condition not met
+    setTimeout(checkShowMatrixButton, 1000);
+  }
+}
+
 async function loadBoth() {
   const rss1 = document.getElementById('rss-1').value.trim();
   const rss2 = document.getElementById('rss-2').value.trim();
@@ -50,10 +63,8 @@ async function loadBoth() {
     document.getElementById('insertCoinBtn').style.display = 'none';
     document.getElementById('startBtn').style.display = 'inline-block';
 
-    // Show Matrix button after 10 seconds
-    setTimeout(() => {
-      document.getElementById('matrixButton').style.display = 'inline-block';
-    }, 10000);
+    // Show Matrix button when both podcasts loaded AND 30 seconds elapsed
+    checkShowMatrixButton();
 
     renderPodcastCards();
     renderTimeline();
