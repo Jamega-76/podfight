@@ -1587,7 +1587,7 @@ function playSoundEffect(type = 'hit') {
   }
 }
 
-// SELECT YOUR PLAYER - Drag & Drop Recent Podcasts
+// SELECT YOUR PLAYER - Street Fighter II Style Character Select
 function getLastUniquePodcasts() {
   const battles = getBattleHistory();
   const podcastMap = new Map();
@@ -1614,14 +1614,39 @@ function getLastUniquePodcasts() {
       });
     }
 
-    // Stop when we have 6
-    if (podcastMap.size >= 6) break;
+    // Stop when we have 8 (for SF2 style 4x2 grid)
+    if (podcastMap.size >= 8) break;
   }
 
-  return Array.from(podcastMap.values()).slice(0, 6);
+  return Array.from(podcastMap.values()).slice(0, 8);
 }
 
-// Render player thumbnails
+// Handle podcast selection (click on thumbnail)
+function selectPodcast(url, title) {
+  // Alternate between filling PODCAST 1 and PODCAST 2
+  const rss1 = document.getElementById('rss-1');
+  const rss2 = document.getElementById('rss-2');
+
+  // If PODCAST 1 is empty, fill it
+  if (!rss1.value.trim()) {
+    rss1.value = url;
+    rss1.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  // Otherwise fill PODCAST 2
+  else if (!rss2.value.trim()) {
+    rss2.value = url;
+    rss2.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  // If both filled, replace the one that hasn't been edited recently
+  else {
+    rss1.value = url;
+    rss1.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  checkUrlsReady();
+}
+
+// Render player thumbnails - Street Fighter II style
 function renderPlayerThumbnails() {
   const container = document.getElementById('playerThumbnails');
   const section = document.getElementById('selectPlayerSection');
@@ -1634,57 +1659,28 @@ function renderPlayerThumbnails() {
 
   section.style.display = 'block';
 
-  container.innerHTML = podcasts.map(pod => `
-    <div class="player-thumbnail" draggable="true" data-url="${pod.url}" data-title="${pod.title}">
-      ${pod.image ? `<img src="${pod.image}" alt="${pod.title}">` : '📻'}
-      <div class="player-thumbnail-tooltip">${pod.title.substring(0, 15)}</div>
-    </div>
-  `).join('');
+  // Generate 8 slots, fill with podcasts or empty slots
+  let html = '';
+  for (let i = 0; i < 8; i++) {
+    if (i < podcasts.length) {
+      const pod = podcasts[i];
+      html += `
+        <div class="player-thumbnail" onclick="selectPodcast('${pod.url.replace(/'/g, "\\'")}', '${pod.title.replace(/'/g, "\\'")}')">
+          ${pod.image ? `<img src="${pod.image}" alt="${pod.title}">` : '<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 48px; background: #333;">📻</div>'}
+          <div class="player-thumbnail-name">${pod.title.substring(0, 20)}</div>
+        </div>
+      `;
+    } else {
+      // Empty slot
+      html += `
+        <div class="player-thumbnail" style="opacity: 0.3; cursor: default;">
+          <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 48px; background: #1a1a1a;">?</div>
+        </div>
+      `;
+    }
+  }
 
-  // Add drag event listeners
-  container.querySelectorAll('.player-thumbnail').forEach(thumb => {
-    thumb.addEventListener('dragstart', (e) => {
-      e.dataTransfer.effectAllowed = 'copy';
-      e.dataTransfer.setData('text/plain', thumb.dataset.url);
-      e.dataTransfer.setData('podcast-url', thumb.dataset.url);
-    });
-
-    thumb.addEventListener('dragend', () => {
-      document.querySelectorAll('.input-box').forEach(box => box.classList.remove('drag-over'));
-    });
-  });
-
-  // Add drop zone listeners to input boxes
-  const rss1Box = document.getElementById('rss-1')?.parentElement;
-  const rss2Box = document.getElementById('rss-2')?.parentElement;
-
-  [rss1Box, rss2Box].forEach(box => {
-    if (!box) return;
-
-    box.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'copy';
-      box.classList.add('drag-over');
-    });
-
-    box.addEventListener('dragleave', () => {
-      box.classList.remove('drag-over');
-    });
-
-    box.addEventListener('drop', (e) => {
-      e.preventDefault();
-      const url = e.dataTransfer.getData('podcast-url');
-      const input = box.querySelector('input');
-
-      if (input && url) {
-        input.value = url;
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-        checkUrlsReady();
-      }
-
-      box.classList.remove('drag-over');
-    });
-  });
+  container.innerHTML = html;
 }
 
 // Initialize on page load

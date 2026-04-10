@@ -5,7 +5,8 @@
       "name": "podator",
       "runtimeExecutable": "bash",
       "runtimeArgs": ["-c", "python3 -m http.server $PORT"],
-      "port": 9999
+      "port": 9999,
+      "autoPort": true
     }
   ]
 }
