@@ -1590,6 +1590,8 @@ function playSoundEffect(type = 'hit') {
 // SELECT YOUR PLAYER - Street Fighter II Style Character Select
 function getLastUniquePodcasts() {
   const battles = getBattleHistory();
+  console.log('Battles found:', battles.length, battles);
+
   const podcastMap = new Map();
 
   // Iterate through battles to get most recent unique podcasts
@@ -1597,7 +1599,8 @@ function getLastUniquePodcasts() {
     const battle = battles[i];
 
     // Add podcast 1 if not already present
-    if (!podcastMap.has(battle.url1) && battle.url1 && battle.title1) {
+    if (battle.url1 && battle.title1 && !podcastMap.has(battle.url1)) {
+      console.log('Adding podcast 1:', battle.title1);
       podcastMap.set(battle.url1, {
         title: battle.title1,
         image: battle.image1 || '',
@@ -1606,7 +1609,8 @@ function getLastUniquePodcasts() {
     }
 
     // Add podcast 2 if not already present
-    if (!podcastMap.has(battle.url2) && battle.url2 && battle.title2) {
+    if (battle.url2 && battle.title2 && !podcastMap.has(battle.url2)) {
+      console.log('Adding podcast 2:', battle.title2);
       podcastMap.set(battle.url2, {
         title: battle.title2,
         image: battle.image2 || '',
@@ -1618,8 +1622,9 @@ function getLastUniquePodcasts() {
     if (podcastMap.size >= 8) break;
   }
 
-  // Return as array, most recent first
+  // Return as array
   const result = Array.from(podcastMap.values());
+  console.log('Unique podcasts:', result.length, result);
   return result.slice(0, 8);
 }
 
@@ -1663,30 +1668,45 @@ function renderPlayerThumbnails() {
   const container = document.getElementById('playerThumbnails');
   const section = document.getElementById('selectPlayerSection');
 
-  if (!container || !section) return;
+  console.log('Rendering thumbnails...', container, section);
+
+  if (!container || !section) {
+    console.log('Container or section not found!');
+    return;
+  }
 
   const podcasts = getLastUniquePodcasts();
+  console.log('Got podcasts:', podcasts);
 
   if (podcasts.length === 0) {
+    console.log('No podcasts, hiding section');
     section.style.display = 'none';
     return;
   }
 
   section.style.display = 'block';
+  console.log('Showing section with', podcasts.length, 'podcasts');
 
   // Generate 8 slots, fill with podcasts or empty slots
   let html = '';
   for (let i = 0; i < 8; i++) {
     if (i < podcasts.length) {
       const pod = podcasts[i];
-      const safeUrl = pod.url.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-      const safeTitle = pod.title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const safeUrl = (pod.url || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const safeTitle = (pod.title || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const imageUrl = pod.image || '';
+
+      console.log(`Slot ${i}: ${pod.title} - Image: ${imageUrl ? 'yes' : 'no'}`);
+
+      // Build image tag with proper escaping
+      const imgTag = imageUrl ? `<img src="${imageUrl}" alt="${safeTitle}" style="width: 100%; height: 100%; object-fit: cover;">` : '';
+      const fallbackIcon = !imageUrl ? '<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 48px; background: #1a1a1a;">📻</div>' : '';
 
       html += `
         <div class="player-thumbnail" onclick="selectPodcast('${safeUrl}', '${safeTitle}')">
-          ${pod.image ? `<img src="${escapeHtml(pod.image)}" alt="${escapeHtml(pod.title)}" onerror="this.style.display='none'">` : ''}
-          <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 48px; background: #1a1a1a; position: absolute; top: 0; left: 0;" ${pod.image ? 'style="display: none;"' : ''}>📻</div>
-          <div class="player-thumbnail-name">${escapeHtml(pod.title.substring(0, 20))}</div>
+          ${imgTag}
+          ${fallbackIcon}
+          <div class="player-thumbnail-name">${safeTitle.substring(0, 20)}</div>
         </div>
       `;
     } else {
@@ -1700,6 +1720,7 @@ function renderPlayerThumbnails() {
   }
 
   container.innerHTML = html;
+  console.log('Thumbnails rendered');
 }
 
 // Initialize on page load
