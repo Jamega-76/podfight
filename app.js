@@ -1592,24 +1592,24 @@ function getLastUniquePodcasts() {
   const battles = getBattleHistory();
   const podcastMap = new Map();
 
-  // Iterate in reverse to get most recent first
-  for (let i = battles.length - 1; i >= 0; i--) {
+  // Iterate through battles to get most recent unique podcasts
+  for (let i = 0; i < battles.length; i++) {
     const battle = battles[i];
 
-    // Add podcast 1
-    if (!podcastMap.has(battle.url1)) {
+    // Add podcast 1 if not already present
+    if (!podcastMap.has(battle.url1) && battle.url1 && battle.title1) {
       podcastMap.set(battle.url1, {
         title: battle.title1,
-        image: battle.image1,
+        image: battle.image1 || '',
         url: battle.url1
       });
     }
 
-    // Add podcast 2
-    if (!podcastMap.has(battle.url2)) {
+    // Add podcast 2 if not already present
+    if (!podcastMap.has(battle.url2) && battle.url2 && battle.title2) {
       podcastMap.set(battle.url2, {
         title: battle.title2,
-        image: battle.image2,
+        image: battle.image2 || '',
         url: battle.url2
       });
     }
@@ -1618,29 +1618,41 @@ function getLastUniquePodcasts() {
     if (podcastMap.size >= 8) break;
   }
 
-  return Array.from(podcastMap.values()).slice(0, 8);
+  // Return as array, most recent first
+  const result = Array.from(podcastMap.values());
+  return result.slice(0, 8);
 }
 
 // Handle podcast selection (click on thumbnail)
 function selectPodcast(url, title) {
-  // Alternate between filling PODCAST 1 and PODCAST 2
+  // Make sure inputs exist
   const rss1 = document.getElementById('rss-1');
   const rss2 = document.getElementById('rss-2');
 
+  if (!rss1 || !rss2) return;
+
+  // Decode URL if it's HTML encoded
+  const decodedUrl = decodeURIComponent(url);
+
   // If PODCAST 1 is empty, fill it
   if (!rss1.value.trim()) {
-    rss1.value = url;
+    rss1.value = decodedUrl;
     rss1.dispatchEvent(new Event('input', { bubbles: true }));
   }
   // Otherwise fill PODCAST 2
   else if (!rss2.value.trim()) {
-    rss2.value = url;
+    rss2.value = decodedUrl;
     rss2.dispatchEvent(new Event('input', { bubbles: true }));
   }
-  // If both filled, replace the one that hasn't been edited recently
+  // If both filled, ask which one to replace or replace first one
   else {
-    rss1.value = url;
+    if (confirm(`Remplacer ${rss1.value.substring(0, 30)}... par ce podcast ?`)) {
+      rss1.value = decodedUrl;
+    } else {
+      rss2.value = decodedUrl;
+    }
     rss1.dispatchEvent(new Event('input', { bubbles: true }));
+    rss2.dispatchEvent(new Event('input', { bubbles: true }));
   }
 
   checkUrlsReady();
@@ -1650,6 +1662,9 @@ function selectPodcast(url, title) {
 function renderPlayerThumbnails() {
   const container = document.getElementById('playerThumbnails');
   const section = document.getElementById('selectPlayerSection');
+
+  if (!container || !section) return;
+
   const podcasts = getLastUniquePodcasts();
 
   if (podcasts.length === 0) {
@@ -1664,16 +1679,20 @@ function renderPlayerThumbnails() {
   for (let i = 0; i < 8; i++) {
     if (i < podcasts.length) {
       const pod = podcasts[i];
+      const safeUrl = pod.url.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const safeTitle = pod.title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
       html += `
-        <div class="player-thumbnail" onclick="selectPodcast('${pod.url.replace(/'/g, "\\'")}', '${pod.title.replace(/'/g, "\\'")}')">
-          ${pod.image ? `<img src="${pod.image}" alt="${pod.title}">` : '<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 48px; background: #333;">📻</div>'}
-          <div class="player-thumbnail-name">${pod.title.substring(0, 20)}</div>
+        <div class="player-thumbnail" onclick="selectPodcast('${safeUrl}', '${safeTitle}')">
+          ${pod.image ? `<img src="${escapeHtml(pod.image)}" alt="${escapeHtml(pod.title)}" onerror="this.style.display='none'">` : ''}
+          <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 48px; background: #1a1a1a; position: absolute; top: 0; left: 0;" ${pod.image ? 'style="display: none;"' : ''}>📻</div>
+          <div class="player-thumbnail-name">${escapeHtml(pod.title.substring(0, 20))}</div>
         </div>
       `;
     } else {
       // Empty slot
       html += `
-        <div class="player-thumbnail" style="opacity: 0.3; cursor: default;">
+        <div class="player-thumbnail" style="opacity: 0.3; cursor: default; pointer-events: none;">
           <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 48px; background: #1a1a1a;">?</div>
         </div>
       `;
