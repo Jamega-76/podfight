@@ -1789,51 +1789,10 @@ function playSoundEffect(type = 'hit') {
 }
 
 // SELECT YOUR PLAYER - Street Fighter II Style Character Select
+// Always returns the default podcasts list (never uses history)
 function getLastUniquePodcasts() {
-  const battles = getBattleHistory();
-  console.log('Battles found:', battles.length, battles);
-
-  const podcastMap = new Map();
-
-  // Iterate through battles to get most recent unique podcasts
-  for (let i = 0; i < battles.length; i++) {
-    const battle = battles[i];
-
-    // Add podcast 1 if not already present
-    if (battle.url1 && battle.title1 && !podcastMap.has(battle.url1)) {
-      console.log('Adding podcast 1:', battle.title1);
-      podcastMap.set(battle.url1, {
-        title: battle.title1,
-        image: battle.image1 || '',
-        url: battle.url1
-      });
-    }
-
-    // Add podcast 2 if not already present
-    if (battle.url2 && battle.title2 && !podcastMap.has(battle.url2)) {
-      console.log('Adding podcast 2:', battle.title2);
-      podcastMap.set(battle.url2, {
-        title: battle.title2,
-        image: battle.image2 || '',
-        url: battle.url2
-      });
-    }
-
-    // Stop when we have 8 (for SF2 style 4x2 grid)
-    if (podcastMap.size >= 8) break;
-  }
-
-  // Return as array
-  let result = Array.from(podcastMap.values()).slice(0, 8);
-
-  // If no history, use default podcasts
-  if (result.length === 0) {
-    console.log('No history found, using default podcasts');
-    result = DEFAULT_PODCASTS;
-  }
-
-  console.log('Unique podcasts:', result.length, result);
-  return result;
+  console.log('Returning default podcasts for SELECT YOUR PLAYER');
+  return DEFAULT_PODCASTS;
 }
 
 // Handle podcast selection (click on thumbnail)
