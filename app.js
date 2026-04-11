@@ -452,25 +452,133 @@ function getTodayStats(playerNum) {
   };
 }
 
+// NEW: Get stats for last 7 days (rolling window)
+function getLast7DaysStats(playerNum) {
+  const episodes = podcasts[playerNum].episodes;
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  const last7Days = episodes.filter(ep => {
+    const pubDate = new Date(ep.pubDate);
+    return pubDate >= sevenDaysAgo && pubDate <= now;
+  });
+
+  // Calculate stats
+  const totalEpisodes = last7Days.length;
+  const totalDuration = last7Days.reduce((sum, ep) => sum + (ep.duration || 0), 0);
+  const totalMinutes = Math.round(totalDuration / 60);
+  const avgDurationPerEpisode = totalEpisodes > 0 ? Math.round(totalDuration / totalEpisodes / 60) : 0;
+  const avgEpisodesPerDay = Math.round((totalEpisodes / 7) * 10) / 10;
+
+  // Count active days (days with at least 1 episode)
+  const activeDays = new Set();
+  last7Days.forEach(ep => {
+    const d = new Date(ep.pubDate);
+    d.setHours(0, 0, 0, 0);
+    activeDays.add(d.getTime());
+  });
+  const consistencyScore = activeDays.size; // 0-7
+
+  // Recency: Check if active in last 3 days
+  const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
+  const recentEpisodes = last7Days.filter(ep => new Date(ep.pubDate) >= threeDaysAgo);
+  const isRecent = recentEpisodes.length > 0;
+
+  return {
+    totalEpisodes,
+    totalMinutes,
+    avgEpisodesPerDay,
+    avgDurationPerEpisode,
+    consistencyScore,
+    isRecent,
+    activeDays: activeDays.size
+  };
+}
+
+// NEW: Calculate score using multi-criteria approach
+function calculatePlayerScore(playerNum) {
+  const stats = getLast7DaysStats(playerNum);
+  let score = 0;
+  const breakdown = {};
+
+  // 1. PRODUCTIVITÉ TOTALE (25 pts max)
+  // Podcasts avec ~150 eps/7j = 25 pts
+  const prodScore = Math.min(25, (stats.totalEpisodes / 150) * 25);
+  breakdown.productivité = {
+    label: 'Productivité',
+    value: stats.totalEpisodes + ' épisodes',
+    points: Math.round(prodScore)
+  };
+  score += prodScore;
+
+  // 2. FRÉQUENCE MOYENNE (25 pts max)
+  // ~21 éps/jour = 25 pts
+  const freqScore = Math.min(25, (stats.avgEpisodesPerDay / 21) * 25);
+  breakdown.fréquence = {
+    label: 'Fréquence',
+    value: stats.avgEpisodesPerDay.toFixed(1) + ' épisodes/jour',
+    points: Math.round(freqScore)
+  };
+  score += freqScore;
+
+  // 3. DURÉE TOTALE (20 pts max)
+  // ~450 min = 25 pts
+  const durationScore = Math.min(20, (stats.totalMinutes / 450) * 20);
+  breakdown.durée = {
+    label: 'Durée',
+    value: stats.totalMinutes + ' minutes',
+    points: Math.round(durationScore)
+  };
+  score += durationScore;
+
+  // 4. CONSISTANCE/RÉGULARITÉ (15 pts max)
+  // 7/7 jours = 15 pts
+  const consistScore = (stats.consistencyScore / 7) * 15;
+  breakdown.consistance = {
+    label: 'Régularité',
+    value: stats.consistencyScore + '/7 jours actifs',
+    points: Math.round(consistScore)
+  };
+  score += consistScore;
+
+  // 5. RÉCENCE (15 pts max)
+  // Actif dans les 3 derniers jours = 15 pts, sinon décrémente
+  let recencyScore = 15;
+  if (!stats.isRecent) {
+    recencyScore = 5; // Pénalité si inactif
+  }
+  breakdown.récence = {
+    label: 'Récence',
+    value: stats.isRecent ? 'Actif récemment ✓' : 'Inactif',
+    points: recencyScore
+  };
+  score += recencyScore;
+
+  return {
+    totalScore: Math.round(score),
+    breakdown: breakdown,
+    stats: stats
+  };
+}
+
+// NEW: Determine winner using multi-criteria scoring
 function determineWinner() {
-  const stats1 = getTodayStats(1);
-  const stats2 = getTodayStats(2);
+  const score1 = calculatePlayerScore(1);
+  const score2 = calculatePlayerScore(2);
 
-  // Primary: Episodes count wins
-  if (stats1.episodeCount > stats2.episodeCount) {
+  console.log('Player 1 Score:', score1);
+  console.log('Player 2 Score:', score2);
+
+  // Store scores globally for display after fight
+  window.lastFightScores = { 1: score1, 2: score2 };
+
+  if (score1.totalScore > score2.totalScore) {
     return 1;
-  } else if (stats2.episodeCount > stats1.episodeCount) {
+  } else if (score2.totalScore > score1.totalScore) {
     return 2;
   }
 
-  // Tiebreaker: Total duration of today's episodes
-  if (stats1.totalMinutes > stats2.totalMinutes) {
-    return 1;
-  } else if (stats2.totalMinutes > stats1.totalMinutes) {
-    return 2;
-  }
-
-  // If completely tied, player 1 wins by default
+  // If tied, player 1 wins by default
   return 1;
 }
 
@@ -937,7 +1045,54 @@ function renderAnalysisSummary(intoModal = false) {
   const isLowVolumeDeep = lowVolumePod.dur >= 25;
   const isBalancedEcosystem = Math.abs(highVolumePod.total - lowVolumePod.total) < 5;
 
+  // Get score breakdown if available
+  let scoreBreakdown = '';
+  if (window.lastFightScores) {
+    const scores = window.lastFightScores;
+    const score1 = scores[1];
+    const score2 = scores[2];
+
+    scoreBreakdown = `
+    <div style="background: rgba(0, 255, 255, 0.1); border: 2px solid #00ffff; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+      <div style="color: #00ffff; font-weight: 700; margin-bottom: 12px; font-size: 1.1em;">⚔️ SCORE DE COMBAT (7 DERNIERS JOURS)</div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px;">
+        <div style="background: rgba(255, 0, 255, 0.2); padding: 12px; border-left: 4px solid #ff00ff;">
+          <div style="color: #ff00ff; font-weight: 700; margin-bottom: 8px;">${podcasts[1].title}</div>
+          <div style="font-size: 1.8em; color: #ffff00; font-weight: 900;">${score1.totalScore}</div>
+          <div style="font-size: 0.9em; color: #00ff88;">/ 100 points</div>
+        </div>
+
+        <div style="background: rgba(255, 215, 9, 0.2); padding: 12px; border-left: 4px solid #ffd709;">
+          <div style="color: #ffd709; font-weight: 700; margin-bottom: 8px;">${podcasts[2].title}</div>
+          <div style="font-size: 1.8em; color: #ffff00; font-weight: 900;">${score2.totalScore}</div>
+          <div style="font-size: 0.9em; color: #00ff88;">/ 100 points</div>
+        </div>
+      </div>
+
+      <div style="color: #ffaa00; font-weight: 700; margin-bottom: 10px; font-size: 0.95em;">Détail par Critère:</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.9em;">
+        ${Object.entries(score1.breakdown).map(([key, data]) => `
+          <div style="background: rgba(255, 0, 255, 0.1); padding: 8px; border-radius: 4px;">
+            <div style="color: #ff00ff; font-weight: 700;">${data.label}: ${data.points} pts</div>
+            <div style="color: #00ff88; font-size: 0.85em;">${data.value}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.9em; margin-top: 10px;">
+        ${Object.entries(score2.breakdown).map(([key, data]) => `
+          <div style="background: rgba(255, 215, 9, 0.1); padding: 8px; border-radius: 4px;">
+            <div style="color: #ffd709; font-weight: 700;">${data.label}: ${data.points} pts</div>
+            <div style="color: #00ff88; font-size: 0.85em;">${data.value}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  }
+
   let analysis = `<div class="comparative-analysis" style="color: #00ff88; line-height: 1.8; text-align: left;">
+    ${scoreBreakdown}
     <div style="color: #ffff00; font-weight: 700; font-size: 1.05em; margin-bottom: 18px;">Analyse Comparative des Dynamiques Éditoriales</div>
 
     <div style="margin-bottom: 18px;">
