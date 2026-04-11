@@ -3,6 +3,50 @@ let pageLoadTime = Date.now();
 const MIN_LOAD_TIME = 30000; // 30 seconds
 const MAX_HISTORY = 10; // Maximum number of battles to keep in history
 
+// Default podcasts for SELECT YOUR PLAYER - displayed when history is empty
+const DEFAULT_PODCASTS = [
+  {
+    title: 'Hondelatte Raconte',
+    url: 'https://feeds.audiomeans.fr/feed/7773697e-dd5d-4650-808b-158712520883.xml',
+    image: 'https://static.audiomeans.fr/img/podcast/149b3984-c3a5-434b-b333-17c57e0091c3.jpg'
+  },
+  {
+    title: 'Au Cœur de l\'Histoire',
+    url: 'https://feeds.audiomeans.fr/feed/7c44ef0d-1d1c-4230-9da1-b2e4f839108c.xml',
+    image: 'https://static.audiomeans.fr/img/podcast/0efae155-54bc-4192-9689-ca13b00339e8.jpg'
+  },
+  {
+    title: 'Entrez dans l\'Histoire',
+    url: 'https://feeds.audiomeans.fr/feed/971b31f2-42d6-4d41-95ee-1c0554528483.xml',
+    image: 'https://static.audiomeans.fr/img/podcast/adb2d021-96cb-4f52-809b-e65dcd7f7e3a.jpg'
+  },
+  {
+    title: 'Affaires sensibles',
+    url: 'https://radiofrance-podcast.net/podcast09/podcast_0b91efaf-26e6-11e4-907f-782bcb6744eb.xml',
+    image: 'https://www.radiofrance.fr/s3/cruiser-production/2023/04/7b50cf5f-f5bd-4dc4-8b1d-b08666768dcf/1400x1400_sc_affaires-sensibles.jpg'
+  },
+  {
+    title: 'L\'Heure Du Crime',
+    url: 'https://feeds.audiomeans.fr/feed/de5ba943-e720-4988-a518-40404f231ff3.xml',
+    image: 'https://static.audiomeans.fr/img/podcast/d723d98d-f5cf-4436-87b2-131d065c6d18.jpg'
+  },
+  {
+    title: 'Pascal Praud et vous',
+    url: 'https://feeds.audiomeans.fr/feed/9562ff43-55ee-44af-95e0-db69d162ebae.xml',
+    image: 'https://static.audiomeans.fr/img/podcast/d18bed44-6c78-4ec8-9a28-ffe51e4a5345.jpg'
+  },
+  {
+    title: 'Les Grandes Gueules',
+    url: 'https://feeds.simplecast.com/MBdw4Qrw',
+    image: 'https://image.simplecastcdn.com/images/1fd73afa-ad51-414f-aa4b-53e39be70a2e/d939cf1a-39c3-472d-bb00-8262220f3b4f/3000x3000/1400-podcasts-grandesgueules-2025.jpg?aid=rss_feed'
+  },
+  {
+    title: 'Les grands dossiers de l\'Histoire par Franck Ferra',
+    url: 'https://feeds.audiomeans.fr/feed/1e1146ca-6d5d-4a7c-a1a2-0735872d9b07.xml',
+    image: 'https://static.audiomeans.fr/img/podcast/100029e6-38eb-444b-ab7a-ab4c58a21c75.jpg'
+  }
+];
+
 // Check if it's time to show the Konami button
 function checkShowKonamiButton() {
   const now = Date.now();
@@ -1780,9 +1824,16 @@ function getLastUniquePodcasts() {
   }
 
   // Return as array
-  const result = Array.from(podcastMap.values());
+  let result = Array.from(podcastMap.values()).slice(0, 8);
+
+  // If no history, use default podcasts
+  if (result.length === 0) {
+    console.log('No history found, using default podcasts');
+    result = DEFAULT_PODCASTS;
+  }
+
   console.log('Unique podcasts:', result.length, result);
-  return result.slice(0, 8);
+  return result;
 }
 
 // Handle podcast selection (click on thumbnail)
