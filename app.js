@@ -979,6 +979,8 @@ function render10DayHeatmap() {
 
 // New Card: Analysis Summary
 function renderAnalysisSummary(intoModal = false) {
+  // Only show analysis if a fight has been run (scores exist)
+  if (!window.lastFightScores) return '';
   if (!podcasts[1] || !podcasts[2]) return '';
 
   const today = new Date().toDateString();
