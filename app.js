@@ -242,21 +242,30 @@ function loadBattleFromHistory(url1, url2) {
 
 async function fetchAndParseRSS(url) {
   try {
-    const response = await fetch(url);
-    if (response.ok) {
-      const xml = await response.text();
-      return parseRSSXML(xml);
+    // Always use CORS proxy to ensure compatibility with all RSS feeds
+    // This avoids CORS errors and works with any RSS server
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    console.log('Fetching RSS via proxy:', proxyUrl);
+
+    const response = await fetch(proxyUrl);
+
+    if (!response.ok) {
+      console.error('Proxy fetch failed with status:', response.status);
+      throw new Error(`Impossible de récupérer le flux RSS (Status: ${response.status})`);
     }
-  } catch (e) {
-    console.log('Direct fetch failed, trying proxy...');
+
+    const xml = await response.text();
+
+    // Check if we got valid XML
+    if (!xml || xml.length < 100) {
+      throw new Error('Flux RSS vide ou invalide');
+    }
+
+    return parseRSSXML(xml);
+  } catch (error) {
+    console.error('Error fetching RSS:', error);
+    throw new Error(`Erreur lors du chargement: ${error.message}`);
   }
-
-  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-  const response = await fetch(proxyUrl);
-  if (!response.ok) throw new Error('Impossible de récupérer le flux RSS');
-
-  const xml = await response.text();
-  return parseRSSXML(xml);
 }
 
 function parseRSSXML(xml) {
