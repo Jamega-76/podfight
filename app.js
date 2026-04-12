@@ -241,47 +241,36 @@ function loadBattleFromHistory(url1, url2) {
 }
 
 async function fetchAndParseRSS(url) {
-  // Try multiple proxies in order of preference
-  const proxies = [
-    (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
-    (u) => `https://thingproxy.freehostingz.com/fetch/${encodeURIComponent(u)}`,
-  ];
+  // Strategy: Try direct fetch first, fallback to proxy if CORS fails
 
-  let lastError = null;
-
-  for (let i = 0; i < proxies.length; i++) {
-    try {
-      const proxyUrl = proxies[i](url);
-      console.log(`Attempt ${i + 1}: Fetching RSS via proxy...`, proxyUrl);
-
-      const response = await fetch(proxyUrl, { timeout: 10000 });
-
-      if (!response.ok) {
-        console.warn(`Proxy ${i + 1} failed with status:`, response.status);
-        lastError = `Proxy ${i + 1} - Status: ${response.status}`;
-        continue;
-      }
-
-      let xml = await response.text();
-
-      // Check if we got valid XML
-      if (!xml || xml.length < 100) {
-        console.warn('Proxy returned empty or invalid response');
-        lastError = 'Flux vide';
-        continue;
-      }
-
-      console.log('Successfully fetched RSS');
+  // Step 1: Try direct fetch
+  try {
+    console.log('Trying direct fetch...', url);
+    const response = await fetch(url);
+    if (response.ok) {
+      const xml = await response.text();
+      console.log('✓ Direct fetch succeeded');
       return parseRSSXML(xml);
-    } catch (error) {
-      console.warn(`Proxy ${i + 1} error:`, error.message);
-      lastError = error.message;
-      continue;
     }
+  } catch (e) {
+    console.log('Direct fetch failed (CORS or network error), trying proxy...');
   }
 
-  // All proxies failed
-  throw new Error(`Impossible de charger ce flux RSS. Vérifiez l'URL: ${lastError}`);
+  // Step 2: Try proxy fallback
+  try {
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    console.log('Trying proxy...', proxyUrl);
+    const response = await fetch(proxyUrl);
+    if (!response.ok) {
+      throw new Error(`Status: ${response.status}`);
+    }
+    const xml = await response.text();
+    console.log('✓ Proxy fetch succeeded');
+    return parseRSSXML(xml);
+  } catch (error) {
+    console.error('Proxy fetch failed:', error.message);
+    throw new Error(`Impossible de charger ce flux RSS: ${error.message}`);
+  }
 }
 
 function parseRSSXML(xml) {
