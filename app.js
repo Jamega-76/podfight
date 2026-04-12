@@ -241,31 +241,47 @@ function loadBattleFromHistory(url1, url2) {
 }
 
 async function fetchAndParseRSS(url) {
-  try {
-    // Always use CORS proxy to ensure compatibility with all RSS feeds
-    // This avoids CORS errors and works with any RSS server
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-    console.log('Fetching RSS via proxy:', proxyUrl);
+  // Try multiple proxies in order of preference
+  const proxies = [
+    (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+    (u) => `https://thingproxy.freehostingz.com/fetch/${encodeURIComponent(u)}`,
+  ];
 
-    const response = await fetch(proxyUrl);
+  let lastError = null;
 
-    if (!response.ok) {
-      console.error('Proxy fetch failed with status:', response.status);
-      throw new Error(`Impossible de récupérer le flux RSS (Status: ${response.status})`);
+  for (let i = 0; i < proxies.length; i++) {
+    try {
+      const proxyUrl = proxies[i](url);
+      console.log(`Attempt ${i + 1}: Fetching RSS via proxy...`, proxyUrl);
+
+      const response = await fetch(proxyUrl, { timeout: 10000 });
+
+      if (!response.ok) {
+        console.warn(`Proxy ${i + 1} failed with status:`, response.status);
+        lastError = `Proxy ${i + 1} - Status: ${response.status}`;
+        continue;
+      }
+
+      let xml = await response.text();
+
+      // Check if we got valid XML
+      if (!xml || xml.length < 100) {
+        console.warn('Proxy returned empty or invalid response');
+        lastError = 'Flux vide';
+        continue;
+      }
+
+      console.log('Successfully fetched RSS');
+      return parseRSSXML(xml);
+    } catch (error) {
+      console.warn(`Proxy ${i + 1} error:`, error.message);
+      lastError = error.message;
+      continue;
     }
-
-    const xml = await response.text();
-
-    // Check if we got valid XML
-    if (!xml || xml.length < 100) {
-      throw new Error('Flux RSS vide ou invalide');
-    }
-
-    return parseRSSXML(xml);
-  } catch (error) {
-    console.error('Error fetching RSS:', error);
-    throw new Error(`Erreur lors du chargement: ${error.message}`);
   }
+
+  // All proxies failed
+  throw new Error(`Impossible de charger ce flux RSS. Vérifiez l'URL: ${lastError}`);
 }
 
 function parseRSSXML(xml) {
