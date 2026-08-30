@@ -303,6 +303,98 @@
   }
   .history-remove:hover{color:var(--err);}
 
+  /* --- Comparateur --- */
+  .compare{
+    margin-top:8px;
+    padding:20px 4px 56px;
+    border-top:1px solid var(--line);
+  }
+  .compare-selects{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .compare-select{
+    flex:1;
+    min-width:0;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    color:var(--ink);
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:10px 10px;
+    cursor:pointer;
+  }
+  .compare-vs{
+    flex-shrink:0;
+    font-size:11px;
+    color:var(--muted);
+  }
+
+  .compare-result{margin-top:8px;}
+  .compare-head-row{
+    display:grid;
+    grid-template-columns:200px repeat(7,1fr);
+    padding:10px 4px 6px;
+  }
+  .compare-head-row .compare-daylabel{
+    text-align:center;
+    font-size:9.5px;
+    font-weight:600;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .compare-head-row .compare-daylabel.is-today{color:var(--accent);}
+
+  .compare-row{
+    display:grid;
+    grid-template-columns:200px repeat(7,1fr);
+    align-items:center;
+    padding:12px 4px;
+    border-top:1px solid var(--line);
+  }
+  .compare-podcast{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+  }
+  .compare-cover{
+    width:34px;
+    height:34px;
+    flex-shrink:0;
+    border-radius:5px;
+    object-fit:cover;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .compare-cover[src=""],
+  .compare-cover:not([src]){visibility:hidden;}
+  .compare-podcast-name{
+    font-size:13px;
+    font-weight:600;
+    line-height:1.3;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .compare-cell{
+    text-align:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:16px;
+    font-weight:700;
+  }
+  .compare-cell.is-today{color:var(--accent);}
+
+  @media (max-width:640px){
+    .compare-head-row, .compare-row{grid-template-columns:120px repeat(7,1fr);}
+    .compare-cover{width:26px; height:26px;}
+    .compare-podcast-name{font-size:12px;}
+    .compare-cell{font-size:13px;}
+  }
+
 </style>
 </head>
 <body>
@@ -341,10 +433,26 @@
     <div id="history-container"><div class="history-empty">Aucun flux analysé pour l'instant</div></div>
   </div>
 
+  <div class="compare">
+    <div class="history-head">Comparer deux flux</div>
+    <div class="compare-selects">
+      <select id="compare-select-a" class="compare-select" onchange="onCompareSelectChange()">
+        <option value="">Choisir un podcast…</option>
+      </select>
+      <span class="compare-vs mono">vs</span>
+      <select id="compare-select-b" class="compare-select" onchange="onCompareSelectChange()">
+        <option value="">Choisir un podcast…</option>
+      </select>
+    </div>
+    <div class="status-msg" id="compare-status"></div>
+    <div class="compare-result" id="compare-result"></div>
+  </div>
+
 </div>
 
 <script>
   const HISTORY_KEY = 'podfight_history';
+  const DAY_NAMES = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 
   function isSameDay(d1, d2) {
     return d1.getDate() === d2.getDate() &&
@@ -451,6 +559,56 @@
     return el ? el.textContent : null;
   }
 
+  async function analyzeFeedUrl(url) {
+    const text = await fetchFeedText(url);
+    const xml = new DOMParser().parseFromString(text, 'text/xml');
+    if (xml.querySelector('parsererror')) throw new Error('Flux XML invalide');
+
+    const podcastTitle = xml.querySelector('channel > title')?.textContent || 'Podcast';
+    const podcastCover = getChannelImage(xml);
+    const items = xml.querySelectorAll('item');
+    if (items.length === 0) throw new Error('Aucun épisode trouvé dans ce flux');
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    // 7 derniers jours : index 0 = aujourd'hui ... index 6 = il y a 6 jours
+    const days = [];
+    for (let i = 0; i <= 6; i++) {
+      const d = new Date(today); d.setDate(d.getDate() - i);
+      days.push({ date: d, count: 0 });
+    }
+
+    const todayEpisodes = [];
+    let hasValidDates = false;
+
+    items.forEach(item => {
+      const pubDateStr = item.querySelector('pubDate')?.textContent;
+      if (!pubDateStr) return;
+      const pubDate = new Date(pubDateStr);
+      if (isNaN(pubDate)) return;
+      hasValidDates = true;
+
+      const dayEntry = days.find(d => isSameDay(d.date, pubDate));
+      if (dayEntry) dayEntry.count++;
+
+      if (isSameDay(pubDate, today)) {
+        todayEpisodes.push({
+          time: pubDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+          date: pubDate,
+          title: item.querySelector('title')?.textContent || 'Sans titre',
+          duration: formatDuration(getItunesDuration(item)),
+          link: item.querySelector('link')?.textContent || item.querySelector('enclosure')?.getAttribute('url') || url
+        });
+      }
+    });
+
+    if (!hasValidDates) throw new Error("Ce flux ne fournit pas de dates de publication exploitables");
+    todayEpisodes.sort((a, b) => b.date - a.date);
+
+    return { url, title: podcastTitle, cover: podcastCover, today, days, todayEpisodes };
+  }
+
   async function analyze() {
     const input = document.getElementById('feed-input');
     const url = input.value.trim();
@@ -467,68 +625,22 @@
     document.getElementById('content-area').innerHTML = '';
 
     try {
-      const text = await fetchFeedText(url);
-      setProgress(60);
-      const xml = new DOMParser().parseFromString(text, 'text/xml');
-      if (xml.querySelector('parsererror')) throw new Error('Flux XML invalide');
-
-      const podcastTitle = xml.querySelector('channel > title')?.textContent || 'Podcast';
-      const podcastCover = getChannelImage(xml);
-      const items = xml.querySelectorAll('item');
-      if (items.length === 0) throw new Error('Aucun épisode trouvé dans ce flux');
-
-      const today = new Date();
-      today.setHours(0,0,0,0);
-
-      // 7 derniers jours : index 0 = il y a 6 jours ... index 6 = aujourd'hui
-      const days = [];
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date(today); d.setDate(d.getDate() - i);
-        days.push({ date: d, count: 0 });
-      }
-
-      const todayEpisodes = [];
-      let hasValidDates = false;
-
-      items.forEach(item => {
-        const pubDateStr = item.querySelector('pubDate')?.textContent;
-        if (!pubDateStr) return;
-        const pubDate = new Date(pubDateStr);
-        if (isNaN(pubDate)) return;
-        hasValidDates = true;
-
-        const dayEntry = days.find(d => isSameDay(d.date, pubDate));
-        if (dayEntry) dayEntry.count++;
-
-        if (isSameDay(pubDate, today)) {
-          todayEpisodes.push({
-            time: pubDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-            date: pubDate,
-            title: item.querySelector('title')?.textContent || 'Sans titre',
-            duration: formatDuration(getItunesDuration(item)),
-            link: item.querySelector('link')?.textContent || item.querySelector('enclosure')?.getAttribute('url') || url
-          });
-        }
-      });
-
-      if (!hasValidDates) throw new Error("Ce flux ne fournit pas de dates de publication exploitables");
-
-      todayEpisodes.sort((a, b) => b.date - a.date);
+      const result = await analyzeFeedUrl(url);
+      setProgress(80);
 
       // --- Affichage résultat ---
-      document.getElementById('result-title').textContent = podcastTitle;
+      document.getElementById('result-title').textContent = result.title;
       const coverEl = document.getElementById('result-cover');
-      if (podcastCover) { coverEl.src = podcastCover; coverEl.alt = podcastTitle; }
+      if (result.cover) { coverEl.src = result.cover; coverEl.alt = result.title; }
       else { coverEl.removeAttribute('src'); }
       const feedLinkEl = document.getElementById('result-feedlink');
       feedLinkEl.href = url;
       feedLinkEl.textContent = url;
       document.getElementById('result-head').classList.add('show');
 
-      const DAY_NAMES = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
       const statsEl = document.getElementById('stats');
-      statsEl.innerHTML = days.map(d => {
-        const isToday = isSameDay(d.date, today);
+      statsEl.innerHTML = result.days.map(d => {
+        const isToday = isSameDay(d.date, result.today);
         const label = isToday ? "Aujourd'hui" : DAY_NAMES[d.date.getDay()];
         return `
           <div class="stat${isToday ? ' is-today' : ''}">
@@ -540,10 +652,10 @@
 
       document.getElementById('list-head').classList.add('show');
       const area = document.getElementById('content-area');
-      if (todayEpisodes.length === 0) {
+      if (result.todayEpisodes.length === 0) {
         area.innerHTML = '<div class="empty">Aucun épisode publié aujourd\'hui</div>';
       } else {
-        area.innerHTML = todayEpisodes.map(ep => `
+        area.innerHTML = result.todayEpisodes.map(ep => `
           <div class="row">
             <div class="row-time mono">${ep.time}</div>
             <div class="row-body">
@@ -557,7 +669,7 @@
 
       setProgress(100);
       setStatus('');
-      saveToHistory(url, podcastTitle);
+      saveToHistory(url, result.title, result.cover);
       renderHistory();
     } catch (e) {
       setStatus(e.message || 'Erreur lors de l\'analyse de ce flux', true);
@@ -578,10 +690,10 @@
     catch (e) { return []; }
   }
 
-  function saveToHistory(url, title) {
+  function saveToHistory(url, title, cover) {
     let hist = loadHistory();
     hist = hist.filter(h => h.url !== url);
-    hist.unshift({ url, title, ts: Date.now() });
+    hist.unshift({ url, title, cover: cover || null, ts: Date.now() });
     hist = hist.slice(0, 25);
     localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
   }
@@ -603,15 +715,85 @@
     const container = document.getElementById('history-container');
     if (hist.length === 0) {
       container.innerHTML = '<div class="history-empty">Aucun flux analysé pour l\'instant</div>';
+    } else {
+      container.innerHTML = `<div class="history-list">${hist.map(h => `
+        <div class="history-item" onclick="useHistoryEntry('${h.url.replace(/'/g, "\\'")}')">
+          <div class="history-name">${escapeHtml(h.title)}</div>
+          <div class="history-url mono">${escapeHtml(h.url)}</div>
+          <button class="history-remove" onclick="removeFromHistory('${h.url.replace(/'/g, "\\'")}', event)">retirer</button>
+        </div>
+      `).join('')}</div>`;
+    }
+    renderCompareSelectors();
+  }
+
+  // --- Comparateur ---
+  function renderCompareSelectors() {
+    const hist = loadHistory();
+    const selA = document.getElementById('compare-select-a');
+    const selB = document.getElementById('compare-select-b');
+    const valA = selA.value, valB = selB.value;
+
+    [selA, selB].forEach((sel, idx) => {
+      const otherVal = idx === 0 ? valB : valA;
+      sel.innerHTML = '<option value="">Choisir un podcast…</option>' + hist.map(h =>
+        `<option value="${escapeHtml(h.url)}" ${h.url === otherVal ? 'disabled' : ''}>${escapeHtml(h.title)}</option>`
+      ).join('');
+    });
+    selA.value = hist.some(h => h.url === valA) ? valA : '';
+    selB.value = hist.some(h => h.url === valB) ? valB : '';
+  }
+
+  function onCompareSelectChange() {
+    renderCompareSelectors();
+    const urlA = document.getElementById('compare-select-a').value;
+    const urlB = document.getElementById('compare-select-b').value;
+    const resultEl = document.getElementById('compare-result');
+    const statusEl = document.getElementById('compare-status');
+
+    if (!urlA || !urlB) {
+      resultEl.innerHTML = '';
+      statusEl.textContent = '';
+      statusEl.classList.remove('err');
       return;
     }
-    container.innerHTML = `<div class="history-list">${hist.map(h => `
-      <div class="history-item" onclick="useHistoryEntry('${h.url.replace(/'/g, "\\'")}')">
-        <div class="history-name">${escapeHtml(h.title)}</div>
-        <div class="history-url mono">${escapeHtml(h.url)}</div>
-        <button class="history-remove" onclick="removeFromHistory('${h.url.replace(/'/g, "\\'")}', event)">retirer</button>
-      </div>
-    `).join('')}</div>`;
+    runCompare(urlA, urlB);
+  }
+
+  async function runCompare(urlA, urlB) {
+    const statusEl = document.getElementById('compare-status');
+    const resultEl = document.getElementById('compare-result');
+    statusEl.textContent = 'Comparaison en cours…';
+    statusEl.classList.remove('err');
+    resultEl.innerHTML = '';
+
+    try {
+      const [a, b] = await Promise.all([analyzeFeedUrl(urlA), analyzeFeedUrl(urlB)]);
+
+      const headRow = `<div class="compare-head-row"><div></div>${a.days.map(d => {
+        const isToday = isSameDay(d.date, a.today);
+        const label = isToday ? "Aujourd'hui" : DAY_NAMES[d.date.getDay()];
+        return `<div class="compare-daylabel${isToday ? ' is-today' : ''}">${label}</div>`;
+      }).join('')}</div>`;
+
+      const podcastRow = (p) => `
+        <div class="compare-row">
+          <div class="compare-podcast">
+            <img class="compare-cover" ${p.cover ? `src="${p.cover}"` : ''} alt="">
+            <div class="compare-podcast-name">${escapeHtml(p.title)}</div>
+          </div>
+          ${p.days.map(d => {
+            const isToday = isSameDay(d.date, p.today);
+            return `<div class="compare-cell${isToday ? ' is-today' : ''}">${d.count}</div>`;
+          }).join('')}
+        </div>`;
+
+      resultEl.innerHTML = headRow + podcastRow(a) + podcastRow(b);
+      statusEl.textContent = '';
+    } catch (e) {
+      statusEl.textContent = e.message || 'Erreur lors de la comparaison';
+      statusEl.classList.add('err');
+    }
   }
 
   renderHistory();
