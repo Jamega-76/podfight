@@ -119,9 +119,23 @@
   /* --- Result header --- */
   .result-head{
     display:none;
+    align-items:flex-start;
+    gap:16px;
     padding:26px 4px 0;
   }
-  .result-head.show{display:block;}
+  .result-head.show{display:flex;}
+  .result-cover{
+    width:64px;
+    height:64px;
+    flex-shrink:0;
+    border-radius:6px;
+    object-fit:cover;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .result-cover[src=""],
+  .result-cover:not([src]){display:none;}
+  .result-body{min-width:0;}
   .result-title{
     font-size:18px;
     font-weight:700;
@@ -138,35 +152,37 @@
   }
   .result-feedlink:hover{text-decoration:underline;}
 
-  /* --- Stats (3-day breakdown) --- */
+  /* --- Stats (7-day breakdown) --- */
   .stats{
     display:none;
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(7,1fr);
     border-top:1px solid var(--line);
     border-bottom:1px solid var(--line);
     margin-top:22px;
   }
   .stats.show{display:grid;}
   .stat{
-    padding:24px 4px 20px;
+    padding:20px 2px 16px;
     text-align:center;
     border-right:1px solid var(--line);
   }
   .stat:last-child{border-right:none;}
   .stat-num{
     font-family:'JetBrains Mono',monospace;
-    font-size:32px;
+    font-size:22px;
     font-weight:700;
     line-height:1;
   }
   .stat-label{
-    margin-top:8px;
-    font-size:11px;
+    margin-top:7px;
+    font-size:9.5px;
     font-weight:600;
-    letter-spacing:0.08em;
+    letter-spacing:0.04em;
     text-transform:uppercase;
     color:var(--muted);
   }
+  .stat.is-today .stat-num{color:var(--accent);}
+  .stat.is-today .stat-label{color:var(--accent);}
 
   /* --- Today's episode list --- */
   .list-head{
@@ -308,24 +324,14 @@
   </div>
 
   <div class="result-head" id="result-head">
-    <div class="result-title" id="result-title"></div>
-    <a class="result-feedlink" id="result-feedlink" href="#" target="_blank" rel="noopener"></a>
+    <img class="result-cover" id="result-cover" alt="">
+    <div class="result-body">
+      <div class="result-title" id="result-title"></div>
+      <a class="result-feedlink" id="result-feedlink" href="#" target="_blank" rel="noopener"></a>
+    </div>
   </div>
 
-  <div class="stats" id="stats">
-    <div class="stat">
-      <div class="stat-num mono" id="count-before-yesterday">–</div>
-      <div class="stat-label">Avant-hier</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num mono" id="count-yesterday">–</div>
-      <div class="stat-label">Hier</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num mono" id="count-today">–</div>
-      <div class="stat-label">Aujourd'hui</div>
-    </div>
-  </div>
+  <div class="stats" id="stats"></div>
 
   <div class="list-head" id="list-head">Épisodes du jour</div>
   <div class="list" id="content-area"></div>
@@ -420,6 +426,22 @@
     return null;
   }
 
+  function getChannelImage(xml) {
+    const channel = xml.querySelector('channel');
+    if (!channel) return null;
+    // itunes:image href="..."
+    let el = channel.getElementsByTagName('itunes:image')[0];
+    if (!el) {
+      const all = channel.getElementsByTagName('*');
+      for (const n of all) { if (n.localName === 'image' && n.getAttribute('href')) { el = n; break; } }
+    }
+    if (el && el.getAttribute('href')) return el.getAttribute('href');
+    // <image><url>...</url></image>
+    const urlEl = channel.querySelector('image > url');
+    if (urlEl && urlEl.textContent) return urlEl.textContent.trim();
+    return null;
+  }
+
   function getItunesDuration(item) {
     let el = item.getElementsByTagName('itunes:duration')[0];
     if (!el) {
@@ -439,6 +461,7 @@
     setStatus('Analyse en cours…');
     setProgress(15);
     document.getElementById('result-head').classList.remove('show');
+    document.getElementById('result-cover').removeAttribute('src');
     document.getElementById('stats').classList.remove('show');
     document.getElementById('list-head').classList.remove('show');
     document.getElementById('content-area').innerHTML = '';
@@ -450,14 +473,20 @@
       if (xml.querySelector('parsererror')) throw new Error('Flux XML invalide');
 
       const podcastTitle = xml.querySelector('channel > title')?.textContent || 'Podcast';
+      const podcastCover = getChannelImage(xml);
       const items = xml.querySelectorAll('item');
       if (items.length === 0) throw new Error('Aucun épisode trouvé dans ce flux');
 
       const today = new Date();
-      const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
-      const beforeYesterday = new Date(today); beforeYesterday.setDate(beforeYesterday.getDate() - 2);
+      today.setHours(0,0,0,0);
 
-      let countToday = 0, countYesterday = 0, countBeforeYesterday = 0;
+      // 7 derniers jours : index 0 = il y a 6 jours ... index 6 = aujourd'hui
+      const days = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today); d.setDate(d.getDate() - i);
+        days.push({ date: d, count: 0 });
+      }
+
       const todayEpisodes = [];
       let hasValidDates = false;
 
@@ -468,8 +497,10 @@
         if (isNaN(pubDate)) return;
         hasValidDates = true;
 
+        const dayEntry = days.find(d => isSameDay(d.date, pubDate));
+        if (dayEntry) dayEntry.count++;
+
         if (isSameDay(pubDate, today)) {
-          countToday++;
           todayEpisodes.push({
             time: pubDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
             date: pubDate,
@@ -477,10 +508,6 @@
             duration: formatDuration(getItunesDuration(item)),
             link: item.querySelector('link')?.textContent || item.querySelector('enclosure')?.getAttribute('url') || url
           });
-        } else if (isSameDay(pubDate, yesterday)) {
-          countYesterday++;
-        } else if (isSameDay(pubDate, beforeYesterday)) {
-          countBeforeYesterday++;
         }
       });
 
@@ -490,15 +517,26 @@
 
       // --- Affichage résultat ---
       document.getElementById('result-title').textContent = podcastTitle;
+      const coverEl = document.getElementById('result-cover');
+      if (podcastCover) { coverEl.src = podcastCover; coverEl.alt = podcastTitle; }
+      else { coverEl.removeAttribute('src'); }
       const feedLinkEl = document.getElementById('result-feedlink');
       feedLinkEl.href = url;
       feedLinkEl.textContent = url;
       document.getElementById('result-head').classList.add('show');
 
-      document.getElementById('count-before-yesterday').textContent = countBeforeYesterday;
-      document.getElementById('count-yesterday').textContent = countYesterday;
-      document.getElementById('count-today').textContent = countToday;
-      document.getElementById('stats').classList.add('show');
+      const DAY_NAMES = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+      const statsEl = document.getElementById('stats');
+      statsEl.innerHTML = days.map(d => {
+        const isToday = isSameDay(d.date, today);
+        const label = isToday ? "Aujourd'hui" : DAY_NAMES[d.date.getDay()];
+        return `
+          <div class="stat${isToday ? ' is-today' : ''}">
+            <div class="stat-num mono">${d.count}</div>
+            <div class="stat-label">${label}</div>
+          </div>`;
+      }).join('');
+      statsEl.classList.add('show');
 
       document.getElementById('list-head').classList.add('show');
       const area = document.getElementById('content-area');
